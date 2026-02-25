@@ -21,35 +21,107 @@ export const metadata: Metadata = {
   description: "Mahalaxmi  Infra - NMRDA & RL Residential Plotted Project",
   generator: "v0.app",
   icons: "/Mahalaxmi Infra new Logo.png",
-  keywords: [
-  // Brand
-  'Mahalaxmi Infra', 'Mahalaxmi Infra Nagpur Projects',
-  // General Nagpur
-  'Property in Nagpur for sale', 'Best real estate developers in Nagpur',
-  'Residential plots in Nagpur', 'NMRDA Sanctioned Plots', 'RERA Approved Projects',
-  'Commercial Plots in Nagpur',
-  // Samruddhi Mahamarg
-  'Plots near Samruddhi Mahamarg', 'Investment near Nagpur Expressway',
-  'Samruddhi Mahamarg entrance plots', 'Investment plots near Samruddhi Mahamarg', 'Samruddhi Circle Plots',
-  // Wardha Road / Jamtha / MIHAN
-  'Plots near MIHAN Nagpur', 'Residential plots in Jamtha', 'Property near Wardha Road',
-  'Plots near VCA Stadium Jamtha', 'Wardha Road Plots', 'Jamtha Plots',
-  'Gated community plots in Jamtha Nagpur', 'Ready to construct plots near Wardha Road',
-  // Koradi Road
-  'NMRDA plots in Koradi Road', 'Residential property near Koradi Temple',
-  '2 BHK 3 BHK plots Koradi', 'Koradi Road Plots',
-  // Katol Road
-  'Plots in Katol Road Nagpur', 'Future investment plots Katol Road',
-  'Affordable plots Nagpur West', 'Katol Road Plots',
-  // Umred Road
-  'Industrial and Residential plots Umred Road', 'Plots near Dighori Umred Road',
-  'Low cost plots in Nagpur', 'Umred Road Plots',
+keywords: [
+  // Brand Keywords
+  "Mahalaxmi Infra",
+  "Mahalaxmi Infra Nagpur",
+  "Mahalaxmi Infra projects",
+  "Mahalaxmi Infra projects Nagpur",
+  "Mahalaxmi Infra property",
+  "Mahalaxmi Infra plots",
+  "Mahalaxmi Infra plots for sale",
+  "Mahalaxmi Infra residential plots",
+  "Mahalaxmi Infra commercial property",
+  "Mahalaxmi Infra investment project",
+  "Mahalaxmi Infra new project",
+  "Mahalaxmi Infra price list",
+  "Mahalaxmi Infra booking",
+  "Mahalaxmi Infra contact number",
+  "Mahalaxmi Infra reviews",
+
+  // Mahalaxmi Nagar
+  "Mahalaxmi Nagar Nagpur",
+  "Mahalaxmi Nagar plots Nagpur",
+  "Mahalaxmi Nagar plots for sale",
+  "Mahalaxmi Nagar residential plots",
+  "Mahalaxmi Nagar 45",
+  "Mahalaxmi Nagar 49",
+  "Mahalaxmi Nagar 49 Nagpur",
+  "Mahalaxmi Nagar near AIIMS Nagpur",
+
+  // MIHAN / Wardha Road / Hingna
+  "plots for sale in MIHAN Nagpur",
+  "MIHAN Nagpur plots for sale",
+  "Plot for sale in MIHAN Nagpur",
+  "Mahalaxmi Infra MIHAN Nagpur",
+  "Mahalaxmi plots near MIHAN",
+  "residential plots near AIIMS Nagpur",
+  "Mahalaxmi Infra near AIIMS Nagpur",
+  "plots in Wardha Road Nagpur",
+  "Wardha Road Nagpur property",
+  "Flat for sale in Wardha Road Nagpur",
+  "Mahalaxmi Infra Wardha Road",
+  "Property in Hingna Nagpur",
+  "Hingna Nagpur plots",
+  "Property for sale in Hingna Nagpur",
+  "Mahalaxmi Infra Hingna Road",
+  "Mahalaxmi Infra Sumthana",
+  "Sumthana MIHAN plot",
+
+  // Nagpur General Property
+  "Nagpur property",
+  "Nagpur real estate",
+  "Nagpur property for sale",
+  "Property for sale in Nagpur",
+  "Buy property in Nagpur",
+  "Sell property in Nagpur",
+  "Nagpur property listings",
+  "Nagpur property agents",
+  "Nagpur real estate agents",
+  "Nagpur property for sale by owner",
+
+  // Plots Keywords
+  "Nagpur plots for sale",
+  "Plot for sale in Nagpur",
+  "Buy plot in Nagpur",
+  "Sell plot in Nagpur",
+  "Residential plots in Nagpur",
+  "Commercial plots in Nagpur",
+  "Investment plots in Nagpur",
+  "Affordable plots in Nagpur",
+  "Best plots in Nagpur",
+  "Ready to register plots Nagpur",
+  "NMRDA RL approved plots Nagpur",
+  "Government sanctioned layout Nagpur",
+  "Clear title plots in Nagpur",
+  "Clear title plot in Nagpur",
+  "Bank loan available plots Nagpur",
+
+  // Flats & Apartments
+  "Nagpur flats for sale",
+  "Flats for sale in Nagpur",
+  "Nagpur apartments",
+  "2 BHK flats in Nagpur",
+  "Affordable flats in Nagpur",
+  "Luxury flats in Nagpur",
+  "Budget flats in Nagpur",
+  "Ready to move flats Nagpur",
+  "Manish Nagar flats",
+  "House for sale in Nagpur",
+  "House for sale in Manish Nagar Nagpur",
+
+  // Commercial
+  "Commercial property in Nagpur",
+  "Commercial property for sale in Nagpur",
+
   // Other Locations
-  'Besa Plots', 'Beltarodi Plots', 'Shankarpur Plots', 'Prime Locations in Nagpur',
-  // Long-Tail
-  'Best plots for investment in Nagpur 2026',
-  'NMRDA sanctioned plots with bank loan facility',
-],
+  "Plots in Kamptee Nagpur",
+  "Kamptee Road property",
+  "Best property deals in Nagpur",
+  "Investment property in Nagpur",
+  "Cheap property in Nagpur",
+  "Budget homes Nagpur"
+]
 }
 
 export default function RootLayout({
