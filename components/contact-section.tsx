@@ -31,10 +31,10 @@ const inputStyle: React.CSSProperties = {
   transition: "border-color 0.2s",
 }
 
-const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
   e.currentTarget.style.borderColor = "#C9862b"
 }
-const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
   e.currentTarget.style.borderColor = "rgba(48,83,74,0.18)"
 }
 
@@ -125,8 +125,13 @@ const SuccessState = memo(() => (
 ))
 SuccessState.displayName = "SuccessState"
 
-type FormState = { name: string; email: string; subject: string; message: string }
-const EMPTY_FORM: FormState = { name: "", email: "", subject: "", message: "" }
+type FormState = {
+  name: string
+  mobile: string
+  lookingFor: string
+  interestedIn: string
+}
+const EMPTY_FORM: FormState = { name: "", mobile: "", lookingFor: "", interestedIn: "" }
 
 /* ── Section ── */
 export default function ContactSection() {
@@ -134,7 +139,7 @@ export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormState(prev => ({ ...prev, [name]: value }))
   }, [])
@@ -144,7 +149,7 @@ export default function ContactSection() {
     setIsSubmitting(true)
     setSubmitStatus("idle")
 
-    if (!formState.name || !formState.email || !formState.subject || !formState.message) {
+    if (!formState.name || !formState.mobile || !formState.lookingFor || !formState.interestedIn) {
       setSubmitStatus("error")
       setIsSubmitting(false)
       setTimeout(() => setSubmitStatus("idle"), 3000)
@@ -158,9 +163,13 @@ export default function ContactSection() {
         body: JSON.stringify({
           access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
           name: formState.name,
-          email: formState.email,
-          subject: formState.subject,
-          message: formState.message,
+          subject: `New Inquiry – ${formState.lookingFor}`,
+          message: `
+Name: ${formState.name}
+Mobile: ${formState.mobile}
+Looking For: ${formState.lookingFor}
+Interested In: ${formState.interestedIn}
+          `.trim(),
         }),
       })
       const data = await res.json()
@@ -243,33 +252,84 @@ export default function ContactSection() {
                   <input type="hidden" name="from_name" value="Contact Form Website" />
                   <input type="checkbox" name="botcheck" className="hidden" style={{ display: "none" }} />
 
-                  {/* Name + Email */}
+                  {/* Name + Mobile */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name">Full Name <span style={{ color: "#e55" }}>*</span></Label>
-                      <input type="text" id="name" name="name" value={formState.name} onChange={handleChange}
-                        required placeholder="John Doe" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                      <Label htmlFor="name">Name <span style={{ color: "#e55" }}>*</span></Label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formState.name}
+                        onChange={handleChange}
+                        required
+                        placeholder="John Doe"
+                        style={inputStyle}
+                        onFocus={inputFocus}
+                        onBlur={inputBlur}
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="email">Email Address <span style={{ color: "#e55" }}>*</span></Label>
-                      <input type="email" id="email" name="email" value={formState.email} onChange={handleChange}
-                        required placeholder="john@example.com" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                      <Label htmlFor="mobile">Mobile Number <span style={{ color: "#e55" }}>*</span></Label>
+                      <input
+                        type="tel"
+                        id="mobile"
+                        name="mobile"
+                        value={formState.mobile}
+                        onChange={handleChange}
+                        required
+                        placeholder="+91 XXXXX XXXXX"
+                        style={inputStyle}
+                        onFocus={inputFocus}
+                        onBlur={inputBlur}
+                      />
                     </div>
                   </div>
 
-                  {/* Subject */}
+                  {/* Looking For */}
                   <div>
-                    <Label htmlFor="subject">Subject <span style={{ color: "#e55" }}>*</span></Label>
-                    <input type="text" id="subject" name="subject" value={formState.subject} onChange={handleChange}
-                      required placeholder="How can we help you?" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                    <Label htmlFor="lookingFor">Looking For <span style={{ color: "#e55" }}>*</span></Label>
+                    <select
+                      id="lookingFor"
+                      name="lookingFor"
+                      value={formState.lookingFor}
+                      onChange={handleChange}
+                      required
+                      style={{
+                        ...inputStyle,
+                        appearance: "none",
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "right 1rem center",
+                        paddingRight: "2.5rem",
+                        color: formState.lookingFor ? "#0d0d0d" : "#aaa",
+                        cursor: "pointer",
+                      }}
+                      onFocus={inputFocus}
+                      onBlur={inputBlur}
+                    >
+                      <option value="" disabled>Select property type</option>
+                      <option value="Residential Plots">Residential Plots</option>
+                      <option value="Commercial Plots">Commercial Plots</option>
+                      <option value="Residential & Commercial Plots">Residential &amp; Commercial Plots</option>
+                    </select>
                   </div>
 
-                  {/* Message */}
+                  {/* Interested In */}
                   <div>
-                    <Label htmlFor="message">Message <span style={{ color: "#e55" }}>*</span></Label>
-                    <textarea id="message" name="message" value={formState.message} onChange={handleChange}
-                      required rows={5} placeholder="Tell us about your inquiry..."
-                      style={{ ...inputStyle, resize: "none" }} onFocus={inputFocus} onBlur={inputBlur} />
+                    <Label htmlFor="interestedIn">Interested In (Project with Area) <span style={{ color: "#e55" }}>*</span></Label>
+                    <input
+                      type="text"
+                      id="interestedIn"
+                      name="interestedIn"
+                      value={formState.interestedIn}
+                      onChange={handleChange}
+                      required
+                      placeholder="e.g. Green Valley – 1200 sq.ft"
+                      style={inputStyle}
+                      onFocus={inputFocus}
+                      onBlur={inputBlur}
+                    />
                   </div>
 
                   {/* Error */}
@@ -284,9 +344,12 @@ export default function ContactSection() {
                   )}
 
                   {/* Submit */}
-                  <button type="submit" disabled={isSubmitting}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
                     className="w-full flex items-center justify-center gap-2 font-bold text-sm py-4 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-                    style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.04em" }}>
+                    style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.04em" }}
+                  >
                     {isSubmitting ? (
                       <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Sending…</>
                     ) : (
