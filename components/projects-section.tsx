@@ -315,8 +315,7 @@ export function ProjectsSection() {
     <section
       ref={sectionRef}
       id="projects"
-      className="relative overflow-hidden"
-      style={{ background: "#f7f4ef" }}
+      className="projects-section relative overflow-hidden"
     >
       {/* Left accent stripe */}
       <div

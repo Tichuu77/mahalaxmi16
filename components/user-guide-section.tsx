@@ -235,8 +235,7 @@ export function UserGuideSection() {
     <section
       ref={sectionRef}
       id="user-guide"
-      className="relative overflow-hidden"
-      style={{ background: "#fff" }}
+      className="user-guide-section relative overflow-hidden"
     >
       {/* Right accent stripe */}
       <div className="absolute top-0 right-0 bottom-0 w-1"

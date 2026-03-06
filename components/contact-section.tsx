@@ -191,10 +191,9 @@ Interested In: ${formState.interestedIn}
   }, [formState])
 
   return (
-    <section id="contact" className="relative overflow-hidden" style={{ background: "#fff" }}>
+    <section id="contact" className="contact-section relative overflow-hidden">
       {/* Right accent stripe */}
-      <div className="absolute top-0 right-0 bottom-0 w-1"
-        style={{ background: "linear-gradient(to bottom, #30534A, #C9862b, #30534A)" }} />
+      <div className="contact-accent-bar absolute top-0 right-0 bottom-0 w-1" />
 
       {/* Dot texture */}
       <div className="absolute inset-0 pointer-events-none"

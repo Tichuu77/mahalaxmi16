@@ -79,19 +79,12 @@ const AmenityCard = memo(({ amenity, index }: { amenity: (typeof amenities)[numb
 
   return (
     <div
-      className="group relative rounded-2xl p-4 sm:p-5 lg:p-6 cursor-default overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98]"
-      style={{
-        background: "#fff",
-        border: "1px solid rgba(48,83,74,0.1)",
-        boxShadow: "0 2px 8px rgba(48,83,74,0.05)",
-        willChange: "transform",
-      }}
+      className="amenities-card group"
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
       <span
-        className="absolute top-3 right-3 text-[10px] font-bold tabular-nums"
-        style={{ color: "rgba(48,83,74,0.15)", fontFamily: "'Poppins', sans-serif" }}
+        className="amenities-card-index"
       >
         {String(index + 1).padStart(2, "0")}
       </span>
@@ -122,8 +115,7 @@ const AmenityCard = memo(({ amenity, index }: { amenity: (typeof amenities)[numb
       </p>
 
       <div
-        className="absolute bottom-0 left-0 h-[2.5px] w-0 group-hover:w-full transition-all duration-500 rounded-b-2xl"
-        style={{ background: "linear-gradient(90deg, #C9862b, #30534A)" }}
+        className="amenities-card-accent-bar"
       />
     </div>
   )
@@ -156,8 +148,7 @@ export function AmenitiesSection() {
     <section
       id="amenities"
       ref={sectionRef}
-      className="relative overflow-hidden"
-      style={{ background: "#f7f4ef" }}
+      className="amenities-section relative overflow-hidden"
     >
       <style>{`
         @keyframes marquee {

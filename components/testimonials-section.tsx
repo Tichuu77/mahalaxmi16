@@ -161,8 +161,7 @@ export function TestimonialsSection() {
     <section
       ref={sectionRef}
       id="testimonials"
-      className="relative overflow-hidden"
-      style={{ background: "#f7f4ef" }}
+      className="testimonials-section relative overflow-hidden"
     >
       {/* Left accent stripe */}
       <div className="absolute top-0 left-0 bottom-0 w-1"

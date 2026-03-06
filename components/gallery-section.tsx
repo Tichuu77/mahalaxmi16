@@ -49,17 +49,12 @@ const GalleryTile = memo(({
     />
 
     <div
-      className="absolute inset-0 transition-opacity duration-300"
-      style={{
-        background: wide
-          ? "linear-gradient(to right, rgba(0,0,0,0.55), transparent)"
-          : "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%)",
-      }}
+      className={`absolute inset-0 transition-opacity duration-300 ${wide ? "gallery-tile-overlay wide" : "gallery-tile-overlay"}`}
     />
 
     <div className={`absolute ${large || wide ? "bottom-5 left-5" : "bottom-3 left-3"}`}>
       {(large || wide) && (
-        <span className="block text-[10px] uppercase tracking-widest mb-1 font-semibold" style={{ color: "#C9862b" }}>
+        <span className="gallery-tile-category block text-[10px] uppercase tracking-widest mb-1 font-semibold">
           {item.category}
         </span>
       )}
@@ -70,7 +65,7 @@ const GalleryTile = memo(({
 
     {large && (
       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "rgba(201,134,43,0.82)", backdropFilter: "blur(4px)" }}>
+        <div className="gallery-tile-hover-icon w-14 h-14 rounded-full flex items-center justify-center">
           <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
           </svg>
@@ -80,8 +75,7 @@ const GalleryTile = memo(({
 
     {!large && (
       <div
-        className="absolute bottom-0 left-0 h-[2.5px] w-0 group-hover:w-full transition-all duration-500"
-        style={{ background: "linear-gradient(90deg, #C9862b, #30534A)" }}
+        className="gallery-tile-accent absolute bottom-0 left-0 w-0 group-hover:w-full transition-all duration-500"
       />
     )}
   </div>
@@ -98,8 +92,7 @@ const Lightbox = memo(({ selectedId, onClose, onPrev, onNext }: {
   const active = galleryItems.find(i => i.id === selectedId)!
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-      style={{ background: "rgba(13,13,13,0.92)", backdropFilter: "blur(10px)" }}
+      className="gallery-lightbox-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
       onClick={onClose}
     >
       <div
@@ -118,8 +111,7 @@ const Lightbox = memo(({ selectedId, onClose, onPrev, onNext }: {
         <button
           onClick={e => { e.stopPropagation(); onPrev() }}
           aria-label="Previous"
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors active:scale-95"
-          style={{ background: "rgba(48,83,74,0.85)", backdropFilter: "blur(6px)" }}
+          className="gallery-lightbox-nav-button absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors active:scale-95"
         >
           <ChevronLeft size={20} className="text-white" />
         </button>
@@ -127,8 +119,7 @@ const Lightbox = memo(({ selectedId, onClose, onPrev, onNext }: {
         <button
           onClick={e => { e.stopPropagation(); onNext() }}
           aria-label="Next"
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors active:scale-95"
-          style={{ background: "rgba(48,83,74,0.85)", backdropFilter: "blur(6px)" }}
+          className="gallery-lightbox-nav-button absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors active:scale-95"
         >
           <ChevronRight size={20} className="text-white" />
         </button>
@@ -136,18 +127,16 @@ const Lightbox = memo(({ selectedId, onClose, onPrev, onNext }: {
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-colors active:scale-95"
-          style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(6px)" }}
+          className="gallery-lightbox-close-button absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-colors active:scale-95"
         >
           <X size={18} className="text-white" />
         </button>
 
         <div
-          className="absolute bottom-3 left-3 right-3 rounded-xl px-4 py-3"
-          style={{ background: "rgba(13,13,13,0.7)", backdropFilter: "blur(10px)" }}
+          className="gallery-lightbox-info absolute bottom-3 left-3 right-3 rounded-xl px-4 py-3"
         >
           <p className="text-white font-semibold text-sm">{active.alt}</p>
-          <span className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "#C9862b" }}>
+          <span className="gallery-lightbox-info-category text-[10px] uppercase tracking-widest font-semibold">
             {active.category}
           </span>
         </div>
@@ -211,8 +200,7 @@ export function GallerySection() {
     <section
       ref={sectionRef}
       id="gallery"
-      className="relative overflow-hidden"
-      style={{ background: "#f7f4ef" }}
+      className="gallery-section relative overflow-hidden"
     >
       {/* Dot texture */}
       <div
@@ -226,12 +214,11 @@ export function GallerySection() {
 
       {/* Label strip */}
       <div
-        className="flex items-center gap-4 px-6 sm:px-16 lg:px-24 py-5 relative z-10"
-        style={{ borderBottom: "1px solid rgba(48,83,74,0.1)" }}
+        className="gallery-section-label-strip flex items-center gap-4 px-6 sm:px-16 lg:px-24 py-5 relative z-10"
       >
-        <span className="text-[10px] tracking-[0.35em] uppercase font-bold" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>Gallery</span>
-        <span className="flex-1 h-px" style={{ background: "rgba(48,83,74,0.1)" }} />
-        <span className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "rgba(48,83,74,0.35)", fontFamily: "'Inter', sans-serif" }}>{TOTAL} Photos</span>
+        <span className="gallery-section-label text-[10px] tracking-[0.35em] uppercase font-bold">Gallery</span>
+        <span className="gallery-section-label-divider flex-1" />
+        <span className="gallery-section-label-subtitle text-[10px] tracking-[0.2em] uppercase font-medium">{TOTAL} Photos</span>
       </div>
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-16 lg:px-24 pt-8 pb-6 relative z-10">
@@ -256,7 +243,7 @@ export function GallerySection() {
                 {galleryItems.map((item) => (
                   <div key={item.id} className="min-w-full relative group" onClick={() => setSelectedId(item.id)}>
                     <img src={item.src} alt={item.alt} loading="lazy" decoding="async" className="w-full object-cover" style={{ height: "260px" }} />
-                    <div className="absolute inset-0 flex items-end p-4" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%)" }}>
+                    <div className="gallery-mobile-slide-overlay absolute inset-0 flex items-end p-4">
                       <div>
                         <span className="text-white/70 text-[10px] uppercase tracking-widest block mb-0.5">{item.category}</span>
                         <p className="font-bold text-white text-base">{item.alt}</p>
@@ -268,10 +255,10 @@ export function GallerySection() {
               </div>
             </div>
 
-            <button onClick={prevSlide} aria-label="Previous" className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-all z-10" style={{ background: "rgba(48,83,74,0.85)", backdropFilter: "blur(6px)" }}>
+            <button onClick={prevSlide} aria-label="Previous" className="gallery-slide-nav-button absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-all z-10">
               <ChevronLeft className="w-4 h-4 text-white" />
             </button>
-            <button onClick={nextSlide} aria-label="Next" className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-all z-10" style={{ background: "rgba(48,83,74,0.85)", backdropFilter: "blur(6px)" }}>
+            <button onClick={nextSlide} aria-label="Next" className="gallery-slide-nav-button absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-all z-10">
               <ChevronRight className="w-4 h-4 text-white" />
             </button>
 
@@ -282,7 +269,10 @@ export function GallerySection() {
                   onClick={() => setCurrentSlide(i)}
                   aria-label={`Slide ${i + 1}`}
                   className="h-2 rounded-full transition-all duration-300"
-                  style={{ width: currentSlide === i ? "2rem" : "0.5rem", background: currentSlide === i ? "#C9862b" : "rgba(48,83,74,0.25)" }}
+                  style={{
+                    width: currentSlide === i ? "2rem" : "0.5rem",
+                    background: currentSlide === i ? "#C9862b" : "rgba(48,83,74,0.25)"
+                  }}
                 />
               ))}
             </div>

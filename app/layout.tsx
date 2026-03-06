@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Poppins, Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
+import "@/styles/components.css"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -17,10 +18,46 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Mahalaxmi Infra",
-  description: "Mahalaxmi  Infra - NMRDA & RL Residential Plotted Project",
+  title: "Mahalaxmi Infra | NMRDA & RL Residential Plots in Nagpur",
+  description: "Discover premium NMRDA & RL approved residential plots by Mahalaxmi Infra. Invest in secure land projects with excellent connectivity and future growth.",
   generator: "v0.app",
   icons: "/Mahalaxmi Infra new Logo.png",
+  metadataBase: new URL('https://ak.mahalaxmiinfra.in'),
+  alternates: {
+    canonical: 'https://ak.mahalaxmiinfra.in'
+  },
+  openGraph: {
+    title: "Mahalaxmi Infra | NMRDA & RL Residential Plots",
+    description: "Premium residential plotted development with NMRDA & RL approval. Secure your future investment with Mahalaxmi Infra.",
+    url: "https://ak.mahalaxmiinfra.in",
+    siteName: "Mahalaxmi Infra",
+    type: "website",
+    images: [
+      {
+        url: "https://ak.mahalaxmiinfra.in/preview.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Mahalaxmi Infra - Residential Plots"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mahalaxmi Infra | Residential Plots",
+    description: "Premium plotted development with NMRDA & RL approval. Invest with Mahalaxmi Infra.",
+    images: ["https://ak.mahalaxmiinfra.in/preview.jpg"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+      'max-video-preview': -1
+    }
+  },
   keywords: [
     // Brand Keywords
     "Mahalaxmi Infra",
@@ -132,7 +169,75 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Tag Manager */}
         <script dangerouslySetInnerHTML={{ __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TCG77MQD');` }} />
+        
+        {/* Local Business Schema */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "name": "Mahalaxmi Infra",
+          "url": "https://ak.mahalaxmiinfra.in",
+          "logo": "https://ak.mahalaxmiinfra.in/Malaxmi-Final-Logo.-2png.png",
+          "description": "Premium residential plotted development with NMRDA & RL approval in Nagpur",
+          "sameAs": [
+            "https://www.facebook.com/share/18PdfPMute/",
+            "https://www.instagram.com/mahalaxmiinfra_ak"
+          ],
+          "areaServed": "Nagpur, Maharashtra, India",
+          "telephone": "+91-8999537942",
+          "email": "anil.kakde2016@gmail.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Flat No. 103, 104, Laxmivihar Apartment, Beside Hotel Airport Centre Point, Wardha Road",
+            "addressLocality": "Nagpur",
+            "addressRegion": "Maharashtra",
+            "postalCode": "440025",
+            "addressCountry": "IN"
+          }
+        }) }} />
+
+        {/* Organization Schema */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Mahalaxmi Infra",
+          "alternateName": "Mahalaxmi Infrastructure",
+          "url": "https://ak.mahalaxmiinfra.in",
+          "logo": "https://ak.mahalaxmiinfra.in/Malaxmi-Final-Logo.-2png.png",
+          "description": "Premium NMRDA & RL approved residential plots in Nagpur",
+          "sameAs": [
+            "https://www.facebook.com/share/18PdfPMute/",
+            "https://www.instagram.com/mahalaxmiinfra_ak"
+          ],
+          "telephone": "+91-8999537942",
+          "email": "anil.kakde2016@gmail.com",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Service",
+            "telephone": "+91-8999537942",
+            "email": "anil.kakde2016@gmail.com",
+            "contactOption": "TollFree"
+          },
+          "founder": "Anil Kakde",
+          "foundingDate": "2016"
+        }) }} />
+
+        {/* Website Schema */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Mahalaxmi Infra",
+          "url": "https://ak.mahalaxmiinfra.in",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://ak.mahalaxmiinfra.in/search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }) }} />
       </head>
       <body className={`${poppins.variable} ${inter.variable} font-sans antialiased`}>
     

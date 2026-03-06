@@ -200,7 +200,7 @@ export function FAQSection() {
   const filtered = filter === "all" ? faqs : faqs.filter(f => f.category.toLowerCase() === filter)
 
   return (
-    <section ref={sectionRef} id="faq" className="relative overflow-hidden" style={{ background: "#f7f4ef" }}>
+    <section ref={sectionRef} id="faq" className="faq-section relative overflow-hidden">
       {/* Left accent stripe */}
       <div className="absolute top-0 left-0 bottom-0 w-1"
         style={{ background: "linear-gradient(to bottom, #C9862b, #30534A, #C9862b)" }} />

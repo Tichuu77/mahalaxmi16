@@ -93,8 +93,7 @@ export function AboutSection() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative overflow-hidden"
-      style={{ background: "#f7f4ef" }}
+      className="about-section relative overflow-hidden"
     >
       <style>{`
         .about-feature-tag:hover {
@@ -105,41 +104,26 @@ export function AboutSection() {
 
       {/* Decorative vertical stripe */}
       <div
-        className="absolute top-0 left-0 bottom-0 w-1.5"
-        style={{ background: "linear-gradient(to bottom, #C9862b, #30534A, #C9862b)" }}
+        className="about-gradient-bar absolute top-0 left-0 bottom-0 w-1.5"
       />
 
       {/* Watermark */}
       <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none hidden lg:block"
-        style={{
-          fontSize: "clamp(7rem, 14vw, 16rem)",
-          fontFamily: "'Poppins', sans-serif",
-          fontWeight: 900,
-          lineHeight: 1,
-          color: "transparent",
-          WebkitTextStroke: "1.5px rgba(48,83,74,0.07)",
-          letterSpacing: "-0.04em",
-          userSelect: "none",
-          whiteSpace: "nowrap",
-          paddingRight: "2rem",
-        }}
+        className="about-watermark absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none hidden lg:block"
       >
         INFRA
       </div>
 
       {/* Top strip */}
       <div
-        className="flex items-center gap-4 px-5 sm:px-10 lg:px-24 py-5"
-        style={{ borderBottom: "1px solid rgba(48,83,74,0.1)" }}
+        className="about-header flex items-center gap-4 px-5 sm:px-10 lg:px-24 py-5"
       >
         <span
-          className="text-[10px] tracking-[0.35em] uppercase font-bold whitespace-nowrap"
-          style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}
+          className="about-header-label"
         >
           Who We Are
         </span>
-        <span className="flex-1 h-px" style={{ background: "rgba(48,83,74,0.12)" }} />
+        <span className="about-header-divider flex-1" />
       </div>
 
       {/* Main Grid */}
@@ -148,20 +132,19 @@ export function AboutSection() {
 
           {/* LEFT */}
           <div
-            className={`lg:pr-16 pb-10 lg:pb-14 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`about-left lg:pr-16 pb-10 lg:pb-14 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             style={{ transitionDelay: "0ms", willChange: "transform, opacity" }}
           >
             <h2
-              className="font-bold leading-[1.05] mb-6 text-[#0d0d0d]"
-              style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(1.8rem, 3.5vw, 3.2rem)" }}
+              className="about-title"
             >
               Where Luxury
               <br />
-              <span style={{ color: "#30534A" }}>Meets</span>{" "}
-              <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Craft</span>
+              <span className="about-title-highlight">Meets</span>{" "}
+              <span className="about-title-outline">Craft</span>
             </h2>
 
-            <div className="relative overflow-visible rounded-2xl group" style={{ aspectRatio: "4/3" }}>
+            <div className="about-image-container group">
               <div className="w-full h-full overflow-hidden rounded-2xl">
                 <img
                   src="/aboutUs.webp"
@@ -175,32 +158,25 @@ export function AboutSection() {
               </div>
 
               <div
-                className="absolute inset-0 rounded-2xl"
-                style={{ background: "linear-gradient(to top, rgba(13,13,13,0.6) 0%, transparent 50%)" }}
+                className="about-image-overlay"
               />
 
               <div
-                className="absolute top-3 left-3 flex items-center gap-2 rounded-full px-3 py-1.5"
-                style={{
-                  background: "rgba(48,83,74,0.92)",
-                  backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                }}
+                className="about-image-badge"
               >
                 <Award size={13} className="text-[#C9862b]" />
-                <span className="text-white font-semibold text-[11px] tracking-wide" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                <span className="about-image-badge-text">
                   RERA Approved
                 </span>
               </div>
 
               <div
-                className="absolute bottom-3 right-3 lg:-bottom-5 lg:-right-0 rounded-2xl px-5 py-4 text-center"
-                style={{ background: "#C9862b", minWidth: "90px" }}
+                className="about-years-badge"
               >
-                <div className="font-bold text-white leading-none" style={{ fontSize: "2rem", fontFamily: "'Poppins', sans-serif" }}>
+                <div className="about-years-value">
                   13
                 </div>
-                <div className="text-white/80 text-[10px] tracking-widest uppercase mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <div className="about-years-label">
                   Years
                 </div>
               </div>
@@ -208,24 +184,24 @@ export function AboutSection() {
           </div>
 
           {/* Vertical divider */}
-          <div className="hidden lg:block self-stretch" style={{ background: "rgba(48,83,74,0.1)", width: "1px" }} />
+          <div className="about-divider hidden lg:block self-stretch" />
 
           {/* Horizontal divider (mobile) */}
-          <div className="lg:hidden w-full mb-8" style={{ height: "1px", background: "rgba(48,83,74,0.1)" }} />
+          <div className="about-divider-mobile lg:hidden w-full" />
 
           {/* RIGHT */}
           <div
-            className={`lg:pl-16 pb-10 lg:pb-14 lg:pt-[6.5rem] transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`about-right lg:pl-16 pb-10 lg:pb-14 lg:pt-[6.5rem] transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             style={{ transitionDelay: "150ms", willChange: "transform, opacity" }}
           >
-            <p className="leading-relaxed mb-4 text-[#3a3a3a]" style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)" }}>
+            <p className="about-description">
               With over a decade of excellence in real estate development,{" "}
-              <span className="font-semibold text-[#30534A]">Mahalaxmi Infra</span> is committed to creating
+              <span className="about-description-highlight">Mahalaxmi Infra</span> is committed to creating
               architectural landmarks that blend luxury, sustainability, and innovation in the heart of Nagpur.
             </p>
-            <p className="leading-relaxed mb-8 text-[#3a3a3a]" style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)" }}>
+            <p className="about-description">
               We build not just structures, but{" "}
-              <span className="font-semibold text-[#C9862b]">thriving communities</span>{" "}
+              <span className="about-description-gold">thriving communities</span>{" "}
               where families create lasting memories.
             </p>
 
@@ -236,14 +212,10 @@ export function AboutSection() {
                 return (
                   <div
                     key={i}
-                    className="about-feature-tag flex items-center gap-2 rounded-full px-3 py-2 transition-all duration-200 hover:scale-105 cursor-default"
-                    style={{
-                      background: "rgba(48,83,74,0.07)",
-                      border: "1px solid rgba(48,83,74,0.14)",
-                    }}
+                    className="about-feature-tag"
                   >
-                    <Icon size={12} style={{ color: "#C9862b" }} />
-                    <span className="text-xs font-semibold text-[#30534A]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <Icon size={12} className="about-feature-icon" />
+                    <span className="about-feature-text">
                       {f.text}
                     </span>
                   </div>
@@ -258,33 +230,22 @@ export function AboutSection() {
                 return (
                   <div
                     key={i}
-                    className="rounded-xl p-3 sm:p-4 flex items-center gap-3 transition-all duration-200 hover:scale-[1.02]"
-                    style={{
-                      background: i % 2 === 0 ? "#30534A" : "#fff",
-                      border: `1px solid ${i % 2 === 0 ? "transparent" : "rgba(48,83,74,0.12)"}`,
-                    }}
+                    className={`about-stat-card ${i % 2 === 0 ? "about-stat-card-dark" : "about-stat-card-light"}`}
                   >
                     <div
-                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                      style={{ background: i % 2 === 0 ? "rgba(255,255,255,0.12)" : "rgba(48,83,74,0.08)" }}
+                      className="about-stat-card-icon-container"
                     >
                       <Icon size={16} style={{ color: i % 2 === 0 ? "#C9862b" : "#30534A" }} />
                     </div>
                     <div className="min-w-0">
                       <div
-                        className="font-bold leading-none"
-                        style={{
-                          fontFamily: "'Poppins', sans-serif",
-                          fontSize: "clamp(1.3rem, 2.5vw, 1.7rem)",
-                          color: i % 2 === 0 ? "#C9862b" : "#30534A",
-                        }}
+                        className="about-stat-value"
                       >
                         {stat.value.toLocaleString()}
                         <span style={{ fontSize: "0.85em" }}>{stat.suffix}</span>
                       </div>
                       <div
-                        className="text-[11px] mt-0.5 font-medium leading-tight"
-                        style={{ color: i % 2 === 0 ? "rgba(255,255,255,0.65)" : "#888", fontFamily: "'Inter', sans-serif" }}
+                        className="about-stat-label"
                       >
                         {stat.label}
                       </div>
@@ -298,13 +259,7 @@ export function AboutSection() {
             <div className="flex justify-center">
               <a
                 href="#projects"
-                className="group inline-flex items-center gap-2 font-bold text-sm px-6 py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-105"
-                style={{
-                  background: "linear-gradient(135deg, #30534A, #3d6b60)",
-                  boxShadow: "0 8px 24px rgba(48,83,74,0.35)",
-                  fontFamily: "'Poppins', sans-serif",
-                  letterSpacing: "0.03em",
-                }}
+                className="about-cta group inline-flex items-center gap-2"
               >
                 Explore Our Projects
                 <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,20 +273,18 @@ export function AboutSection() {
 
       {/* Trust strip */}
       <div
-        className={`mt-0 transition-all duration-700 ${isVisible ? "opacity-100" : "opacity-0"}`}
+        className={`about-trust-strip mt-0 transition-all duration-700 ${isVisible ? "opacity-100" : "opacity-0"}`}
         style={{
           transitionDelay: "400ms",
-          borderTop: "1px solid rgba(48,83,74,0.1)",
-          background: "#30534A",
         }}
       >
         <div className="max-w-[1400px] mx-auto px-5 sm:px-10 lg:px-24 py-5 flex flex-wrap items-center justify-center gap-4 sm:gap-8 md:justify-between">
           {trust.map((t, i) => {
             const Icon = t.icon
             return (
-              <div key={i} className="flex items-center gap-2">
-                <Icon size={15} style={{ color: "#C9862b" }} />
-                <span className="text-white/80 text-[11px] font-semibold tracking-wide uppercase" style={{ fontFamily: "'Poppins', sans-serif", letterSpacing: "0.1em" }}>
+              <div key={i} className="about-trust-item">
+                <Icon size={15} className="about-trust-icon" />
+                <span className="about-trust-label">
                   {t.label}
                 </span>
               </div>

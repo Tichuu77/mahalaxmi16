@@ -58,10 +58,7 @@ export function HeroSection() {
       </div>
 
       {/* Vignette */}
-      <div
-        className="absolute inset-0 z-[1] pointer-events-none"
-        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.18) 0%, transparent 40%)" }}
-      />
+      <div className="hero-overlay absolute inset-0 z-[1] pointer-events-none" />
 
       {/* Gold vertical rule */}
       <div
@@ -90,82 +87,45 @@ export function HeroSection() {
         <div className="flex flex-col justify-center">
 
           {/* Eyebrow */}
-          <div
-            className={`transition-all duration-500 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-            style={{ transitionDelay: "0ms", willChange: "transform, opacity" }}
-          >
+          <div className={`transition-all duration-500 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
             <div className="flex items-center gap-3 mb-6 sm:mb-8">
-              <span className="block w-10 h-px" style={{ background: "#C9862b" }} />
-              <span
-                className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase font-semibold"
-                style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}
-              >
+              <span className="hero-accent-line" />
+              <span className="hero-label text-[10px] sm:text-[11px] tracking-[0.3em] uppercase font-semibold">
                 NMRDA Sanctioned · RERA Approved
               </span>
             </div>
           </div>
 
           {/* Headline */}
-          <div
-            className={`transition-all duration-600 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-            style={{ transitionDelay: "80ms", willChange: "transform, opacity" }}
-          >
-            <h1
-              className="font-bold leading-[1.05] mb-5 sm:mb-6"
-              style={{
-                fontFamily: "'Poppins', sans-serif",
-                fontSize: "clamp(2.2rem, 4.5vw, 4.2rem)",
-                color: "#ffffff",
-                textShadow: "0 2px 8px rgba(0,0,0,0.4)",
-              }}
-            >
+          <div className={`transition-all duration-600 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <h1 className="hero-title font-bold leading-[1.05] mb-5 sm:mb-6 text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.4)", fontSize: "clamp(2.2rem, 4.5vw, 4.2rem)" }}>
               Build Your
               <br />
-              <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Dream Home</span>
+              <span className="hero-title-outline">Dream Home</span>
               <br />
               With{" "}
-              <span className="relative inline-block" style={{ color: "#C9862b" }}>
+              <span className="relative inline-block hero-title-gold">
                 Mahalaxmi
-                <span
-                  className="absolute left-0 bottom-0 w-full"
-                  style={{ height: "3px", background: "linear-gradient(90deg, #C9862b, #30534A)", borderRadius: "99px" }}
-                />
+                <span className="hero-title-underline absolute left-0 bottom-0 w-full" />
               </span>{" "}
-              <span style={{ color: "#30534A" }}>Infra</span>
+              <span className="hero-title-dark">Infra</span>
             </h1>
           </div>
 
           {/* Sub-heading */}
-          <div
-            className={`transition-all duration-600 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-            style={{ transitionDelay: "160ms", willChange: "transform, opacity" }}
-          >
-            <p
-              className="mb-6 sm:mb-8 leading-relaxed max-w-lg"
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "clamp(0.9rem, 1.6vw, 1.1rem)",
-                color: "#ffffff",
-                textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-              }}
-            >
+          <div className={`transition-all duration-600 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <p className="hero-description mb-6 sm:mb-8 leading-relaxed max-w-lg">
               Residential &amp; Commercial Plots in the Heart of Nagpur —
               crafted for those who invest in more than just land.
             </p>
           </div>
 
           {/* Location pill */}
-          <div
-            className={`transition-all duration-600 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-            style={{ transitionDelay: "240ms", willChange: "transform, opacity" }}
-          >
-            <div
-              className="flex items-start gap-3 mb-8 sm:mb-10 max-w-lg rounded-xl p-4"
-              style={{ background: "rgba(13,13,13,0.35)", border: "1px solid rgba(201,134,43,0.35)" }}
-            >
-              <MapPin className="w-4 h-4 mt-0.5 shrink-0" style={{ color: "#C9862b" }} />
-              <p className="text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif", color: "#f0ede8" }}>
-                <span className="font-semibold" style={{ color: "#f5c06a" }}>Prime Locations: </span>
+          <div className={`transition-all duration-600 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <div className="hero-location-pill flex items-start gap-3 mb-8 sm:mb-10 max-w-lg rounded-xl p-4">
+              <MapPin className="hero-location-icon w-4 h-4 mt-0.5 shrink-0" />
+              <p className="hero-location-text">
+                <span className="hero-location-label">Prime Locations: </span>
                 Besa, Beltarodi, Shankarpur, Wardha Road, Jamtha, Katol Road,
                 Umred Road, Koradi Road &amp; Samruddhi Circle Nagpur
               </p>
@@ -173,19 +133,10 @@ export function HeroSection() {
           </div>
 
           {/* CTAs */}
-          <div
-            className={`transition-all duration-600 flex flex-wrap gap-3 mb-8 sm:mb-10 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-            style={{ transitionDelay: "320ms", willChange: "transform, opacity" }}
-          >
+          <div className={`hero-cta-container transition-all duration-600 mb-8 sm:mb-10 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <button
               onClick={scrollToContact}
-              className="group flex items-center gap-2 font-bold text-sm px-6 sm:px-7 py-3.5 sm:py-4 rounded-xl text-white transition-all duration-300 hover:scale-105 active:scale-95"
-              style={{
-                background: "linear-gradient(135deg, #30534A, #3d6b60)",
-                boxShadow: "0 8px 30px rgba(48,83,74,0.35)",
-                fontFamily: "'Poppins', sans-serif",
-                letterSpacing: "0.03em",
-              }}
+              className="hero-cta-primary group flex items-center gap-2"
             >
               Contact Us Now
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -194,14 +145,7 @@ export function HeroSection() {
               onClick={scrollToProjects}
               onMouseEnter={handleExploreEnter}
               onMouseLeave={handleExploreLeave}
-              className="font-bold text-sm px-6 sm:px-7 py-3.5 sm:py-4 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95"
-              style={{
-                background: "transparent",
-                border: "1.5px solid rgba(255,255,255,0.6)",
-                color: "#ffffff",
-                fontFamily: "'Poppins', sans-serif",
-                letterSpacing: "0.03em",
-              }}
+              className="hero-cta-secondary font-bold text-sm px-6 sm:px-7 py-3.5 sm:py-4 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95"
             >
               Explore Projects
             </button>

@@ -91,28 +91,20 @@ ExpandedContent.displayName = "ExpandedContent"
 // Featured card (desktop)
 const FeaturedCard = memo(({ article, isOpen, onToggle }: { article: typeof featured; isOpen: boolean; onToggle: (e: React.MouseEvent) => void }) => (
   <article
-    className="group rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-    style={{
-      background: "#fff",
-      border: isOpen ? "1px solid rgba(201,134,43,0.4)" : "1px solid rgba(48,83,74,0.1)",
-      boxShadow: "0 2px 12px rgba(48,83,74,0.06)",
-      willChange: "transform",
-    }}
+    className={`news-featured-card group rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${isOpen ? "expanded" : ""}`}
+    style={{ willChange: "transform" }}
   >
-    <div className="relative overflow-hidden" style={{ height: "260px" }}>
+    <div className="relative overflow-hidden news-featured-card-image">
       <img src={article.image} alt={article.title} loading="lazy" decoding="async"
         className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105"
         style={{ willChange: "transform" }} />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 55%)" }} />
-      <div className="absolute top-4 left-4">
-        <span className="text-[10px] font-bold tracking-widest uppercase rounded-full px-3 py-1"
-          style={{ background: "rgba(255,255,255,0.92)", color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>
+      <div className="absolute bottom-4 left-4">
+        <span className="news-featured-badge text-[10px] font-bold tracking-widest uppercase rounded-full px-3 py-1">
           ★ Featured
         </span>
       </div>
       <div className="absolute bottom-4 left-4">
-        <span className="text-[10px] font-bold tracking-wider uppercase rounded-full px-3 py-1"
-          style={{ background: "rgba(255,255,255,0.9)", color: "#30534A", fontFamily: "'Inter', sans-serif" }}>
+        <span className="news-category-badge text-[10px] font-bold tracking-wider uppercase rounded-full px-3 py-1">
           {article.category}
         </span>
       </div>
@@ -139,23 +131,14 @@ FeaturedCard.displayName = "FeaturedCard"
 // Side card (desktop)
 const SideCard = memo(({ article, isOpen, onToggle }: { article: (typeof newsArticles)[number]; isOpen: boolean; onToggle: (e: React.MouseEvent) => void }) => (
   <article
-    className="group rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-    style={{
-      background: "#fff",
-      border: isOpen ? "1px solid rgba(201,134,43,0.4)" : "1px solid rgba(48,83,74,0.1)",
-      boxShadow: "0 2px 8px rgba(48,83,74,0.05)",
-      flex: 1,
-      willChange: "transform",
-    }}
+    className={`news-card group rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ${isOpen ? "expanded" : ""}`}
   >
-    <div className="relative overflow-hidden" style={{ height: "140px" }}>
+    <div className="relative overflow-hidden news-card-image">
       <img src={article.image} alt={article.title} loading="lazy" decoding="async"
         className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105"
         style={{ willChange: "transform" }} />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 55%)" }} />
       <div className="absolute bottom-3 left-3">
-        <span className="text-[10px] font-bold tracking-wider uppercase rounded-full px-2.5 py-1"
-          style={{ background: "rgba(255,255,255,0.9)", color: "#30534A", fontFamily: "'Inter', sans-serif" }}>
+        <span className="news-category-badge text-[10px] font-bold tracking-wider uppercase rounded-full px-2.5 py-1">
           {article.category}
         </span>
       </div>
@@ -183,21 +166,14 @@ SideCard.displayName = "SideCard"
 // Mobile card
 const MobileCard = memo(({ article, isOpen, onToggle }: { article: (typeof newsArticles)[number]; isOpen: boolean; onToggle: (e: React.MouseEvent) => void }) => (
   <article
-    className="group rounded-2xl overflow-hidden transition-all duration-300"
-    style={{
-      background: "#fff",
-      border: isOpen ? "1px solid rgba(201,134,43,0.4)" : "1px solid rgba(48,83,74,0.1)",
-      boxShadow: "0 2px 8px rgba(48,83,74,0.05)",
-    }}
+    className={`news-card group rounded-2xl overflow-hidden transition-all duration-300 ${isOpen ? "expanded" : ""}`}
   >
-    <div className="relative overflow-hidden" style={{ height: "180px" }}>
+    <div className="relative overflow-hidden news-card-image mobile">
       <img src={article.image} alt={article.title} loading="lazy" decoding="async"
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         style={{ willChange: "transform" }} />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 55%)" }} />
       <div className="absolute bottom-3 left-3">
-        <span className="text-[10px] font-bold tracking-wider uppercase rounded-full px-2.5 py-1"
-          style={{ background: "rgba(255,255,255,0.9)", color: "#30534A", fontFamily: "'Inter', sans-serif" }}>
+        <span className="news-category-badge text-[10px] font-bold tracking-wider uppercase rounded-full px-2.5 py-1">
           {article.category}
         </span>
       </div>
@@ -260,8 +236,7 @@ export default function NewsArticles() {
     <section
       ref={sectionRef}
       id="news"
-      className="relative overflow-hidden"
-      style={{ background: "#fff" }}
+      className="news-section relative overflow-hidden"
     >
       {/* Right accent stripe */}
       <div className="absolute top-0 right-0 bottom-0 w-1"
@@ -276,11 +251,10 @@ export default function NewsArticles() {
         style={{ background: "radial-gradient(circle, rgba(201,134,43,0.06) 0%, transparent 70%)" }} />
 
       {/* Label strip */}
-      <div className="flex items-center gap-4 pl-8 pr-8 sm:pl-16 sm:pr-12 lg:px-24 py-5 relative z-10"
-        style={{ borderBottom: "1px solid rgba(48,83,74,0.1)" }}>
-        <span className="text-[10px] tracking-[0.35em] uppercase font-bold" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>Latest Updates</span>
-        <span className="flex-1 h-px" style={{ background: "rgba(48,83,74,0.1)" }} />
-        <span className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "rgba(48,83,74,0.35)", fontFamily: "'Inter', sans-serif" }}>News &amp; Articles</span>
+      <div className="news-section-label-strip flex items-center gap-4 pl-8 pr-8 sm:pl-16 sm:pr-12 lg:px-24 py-5 relative z-10">
+        <span className="news-section-label text-[10px] tracking-[0.35em] uppercase font-bold">Latest Updates</span>
+        <span className="news-section-label-divider flex-1" />
+        <span className="news-section-label-subtitle text-[10px] tracking-[0.2em] uppercase font-medium">News &amp; Articles</span>
       </div>
 
       <div className="max-w-[1400px] mx-auto pl-8 pr-8 sm:pl-16 sm:pr-12 lg:px-24 pt-12 pb-20 relative z-10">

@@ -1,6 +1,6 @@
 'use client'
 
-import { Mail, Phone, MapPin } from "lucide-react"
+import { Mail, Phone, MapPin, Facebook, Instagram } from "lucide-react"
 import { memo } from "react"
 
 // Static data at module level
@@ -36,12 +36,11 @@ const NavList = memo(({ links }: { links: typeof navLinks }) => (
       <li key={link.href}>
         <a
           href={link.href}
-          className="text-sm flex items-center gap-2 group transition-colors duration-200"
-          style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'Inter', sans-serif" }}
+          className="footer-nav-link flex items-center gap-2 group"
           onMouseEnter={linkEnter}
           onMouseLeave={linkLeave}
         >
-          <span className="block w-3 h-px transition-all duration-200 group-hover:w-5" style={{ background: "#C9862b" }} />
+          <span className="footer-nav-link-bar" />
           {link.label}
         </a>
       </li>
@@ -52,11 +51,8 @@ NavList.displayName = "NavList"
 
 // Icon badge — shared between contact items
 const IconBadge = memo(({ icon: Icon }: { icon: React.ElementType }) => (
-  <span
-    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-    style={{ background: "rgba(201,134,43,0.12)", border: "1px solid rgba(201,134,43,0.2)" }}
-  >
-    <Icon size={13} style={{ color: "#C9862b" }} />
+  <span className="footer-icon-badge">
+    <Icon size={13} />
   </span>
 ))
 IconBadge.displayName = "IconBadge"
@@ -64,23 +60,17 @@ IconBadge.displayName = "IconBadge"
 // Footer is fully static after mount — memo at top level
 export const Footer = memo(function Footer() {
   return (
-    <footer className="relative overflow-hidden" style={{ background: "#30534A" }}>
+    <footer className="footer relative overflow-hidden">
       {/* Dot texture */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)", backgroundSize: "28px 28px" }}
-      />
+      <div className="footer-dot-texture absolute inset-0 pointer-events-none" />
 
       {/* Gold top border */}
-      <div className="w-full h-1" style={{ background: "linear-gradient(90deg, #C9862b, #30534A 40%, #C9862b)" }} />
+      <div className="footer-top-border w-full" />
 
       {/* Label strip */}
-      <div className="flex items-center gap-4 pl-8 pr-8 sm:pl-16 sm:pr-12 lg:px-24 py-4 relative z-10"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-        <span className="text-[10px] tracking-[0.35em] uppercase font-bold" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>
-          Mahalaxmi Infra
-        </span>
-        <span className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+      <div className="footer-label-strip flex items-center gap-4 pl-8 pr-8 sm:pl-16 sm:pr-12 lg:px-24 py-4 relative z-10">
+        <span className="footer-label">Mahalaxmi Infra</span>
+        <span className="footer-divider flex-1" />
       </div>
 
       {/* Main grid */}
@@ -90,77 +80,75 @@ export const Footer = memo(function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <img src="/Malaxmi-Final-Logo.-2png.png" alt="Mahalaxmi Infra Logo"
-                loading="lazy" decoding="async" className="w-16 h-16 object-contain" width={64} height={64} />
+              <img
+                src="/Malaxmi-Final-Logo.-2png.png"
+                alt="Mahalaxmi Infra Logo"
+                loading="lazy"
+                decoding="async"
+                className="w-16 h-16 object-contain"
+                width={64}
+                height={64}
+              />
               <div>
-                <span className="font-bold text-white block leading-tight" style={{ fontFamily: "'Poppins', sans-serif", fontSize: "1.05rem" }}>
-                  Mahalaxmi Infra
-                </span>
-                <span className="text-[10px] tracking-widest uppercase" style={{ color: "#C9862b", fontFamily: "'Inter', sans-serif" }}>
-                  Premium Real Estate
-                </span>
+                <span className="footer-logo-text">Mahalaxmi Infra</span>
+                <span className="footer-subtitle">Premium Real Estate</span>
               </div>
             </div>
 
-            <p className="text-sm leading-relaxed mb-4" style={{ color: "rgba(255,255,255,0.55)", fontFamily: "'Inter', sans-serif", maxWidth: "280px" }}>
+            <p className="footer-description">
               Delivering premium residential &amp; commercial plots with excellence, transparency, and innovation across Nagpur.
             </p>
 
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5"
-              style={{ background: "rgba(201,134,43,0.12)", border: "1px solid rgba(201,134,43,0.3)" }}>
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#C9862b" }} />
-              <span className="text-[11px] font-semibold" style={{ color: "#C9862b", fontFamily: "'Inter', sans-serif" }}>
-                MAHA RERA NO. A50500044714
-              </span>
+            <div className="footer-badge inline-flex items-center gap-2 rounded-full px-4 py-1.5">
+              <span className="footer-badge-dot" />
+              <span className="footer-badge-text">MAHA RERA NO. A50500044714</span>
             </div>
           </div>
 
           {/* Navigation */}
           <div>
-            <h4 className="font-bold text-white mb-5 text-xs uppercase tracking-[0.18em]" style={{ fontFamily: "'Poppins', sans-serif" }}>
-              Navigation
-            </h4>
+            <h4 className="footer-section-title">Navigation</h4>
             <NavList links={navLinks} />
           </div>
 
           {/* Resources */}
           <div>
-            <h4 className="font-bold text-white mb-5 text-xs uppercase tracking-[0.18em]" style={{ fontFamily: "'Poppins', sans-serif" }}>
-              Resources
-            </h4>
+            <h4 className="footer-section-title">Resources</h4>
             <NavList links={resourceLinks} />
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-bold text-white mb-5 text-xs uppercase tracking-[0.18em]" style={{ fontFamily: "'Poppins', sans-serif" }}>
-              Contact
-            </h4>
-            <p className="font-bold text-sm mb-4" style={{ color: "rgba(255,255,255,0.85)", fontFamily: "'Poppins', sans-serif" }}>
-              Anil Kakde
-            </p>
+            <h4 className="footer-section-title">Contact</h4>
+            <p className="footer-contact-name">Anil Kakde</p>
 
             <ul className="space-y-3">
               <li>
-                <a href="tel:+918999537942"
-                  className="flex items-center gap-3 text-sm group transition-colors duration-200"
-                  style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'Inter', sans-serif" }}
-                  onMouseEnter={linkEnter} onMouseLeave={linkLeave}>
+                <a
+                  href="tel:+918999537942"
+                  className="footer-contact-item flex items-center gap-3"
+                  onMouseEnter={linkEnter}
+                  onMouseLeave={linkLeave}
+                >
                   <IconBadge icon={Phone} />
                   +91 8999537942
                 </a>
               </li>
               <li>
-                <a href="mailto:anil.kakde2016@gmail.com"
-                  className="flex items-center gap-3 text-sm group transition-colors duration-200"
-                  style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'Inter', sans-serif" }}
-                  onMouseEnter={linkEnter} onMouseLeave={linkLeave}>
+                <a
+                  href="mailto:anil.kakde2016@gmail.com"
+                  className="footer-contact-item flex items-center gap-3"
+                  onMouseEnter={linkEnter}
+                  onMouseLeave={linkLeave}
+                >
                   <IconBadge icon={Mail} />
                   anil.kakde2016@gmail.com
                 </a>
               </li>
-              <li className="flex items-start gap-3 text-sm" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'Inter', sans-serif" }}>
-                <span className="mt-0.5"><IconBadge icon={MapPin} /></span>
+              <li className="flex items-start gap-3 text-sm footer-contact-item">
+                <span className="mt-0.5">
+                  <IconBadge icon={MapPin} />
+                </span>
                 <span className="leading-relaxed">
                   Flat No. 103, 104, Laxmivihar Apartment, Beside Hotel Airport Centre Point, Wardha Road, Somalwada, Nagpur – 440025
                 </span>
@@ -170,16 +158,33 @@ export const Footer = memo(function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-6"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-          <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "'Inter', sans-serif" }}>
-            © {CURRENT_YEAR} Mahalaxmi Infra. All rights reserved.
-          </p>
+        <div className="footer-bottom-divider flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pt-6">
+          <div>
+            <p className="footer-copyright">© {CURRENT_YEAR} Mahalaxmi Infra. All rights reserved.</p>
+          </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#C9862b" }} />
-            <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "'Inter', sans-serif" }}>
-              NMRDA Sanctioned · RERA Approved · ISO Certified
-            </p>
+            <p className="footer-badge-info">NMRDA Sanctioned · RERA Approved · ISO Certified</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://www.facebook.com/share/18PdfPMute/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Mahalaxmi Infra Facebook"
+              className="footer-social-link transition-colors duration-200"
+            >
+              <Facebook size={20} />
+            </a>
+            <a
+              href="https://www.instagram.com/mahalaxmiinfra_ak"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Mahalaxmi Infra Instagram"
+              className="footer-social-link transition-colors duration-200"
+            >
+              <Instagram size={20} />
+            </a>
           </div>
         </div>
       </div>
