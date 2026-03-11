@@ -66,7 +66,7 @@ const featuredWAUrl = (title: string, location: string) =>
   `https://wa.me/918999537942?text=${encodeURIComponent(`Hi, I'm interested in "${title}" at ${location}. Could you share more details?`)}`
 
 const cardWAUrl = (title: string, location: string) =>
-  `https://wa.me/919579889398?text=${encodeURIComponent(`Hi, I'm interested in "${title}" at ${location}. Could you share more details?`)}`
+  `https://wa.me/918999537942?text=${encodeURIComponent(`Hi, I'm interested in "${title}" at ${location}. Could you share more details?`)}`
 
 /* ── FeaturedCard ── */
 const FeaturedCard = memo(({ project }: { project: Project }) => {

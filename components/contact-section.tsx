@@ -262,7 +262,7 @@ Interested In: ${formState.interestedIn}
                         value={formState.name}
                         onChange={handleChange}
                         required
-                        placeholder="John Doe"
+                        placeholder="Enter your name"
                         style={inputStyle}
                         onFocus={inputFocus}
                         onBlur={inputBlur}

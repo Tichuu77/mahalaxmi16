@@ -101,14 +101,13 @@ export function HeroSection() {
             <h1 className="hero-title font-bold leading-[1.05] mb-5 sm:mb-6 text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.4)", fontSize: "clamp(2.2rem, 4.5vw, 4.2rem)" }}>
               Build Your
               <br />
-              <span className="hero-title-outline">Dream Home</span>
+              <span className="text-white">Dream Home</span>
               <br />
               With{" "}
-              <span className="relative inline-block hero-title-gold">
-                Mahalaxmi
+              <span className="relative inline-block text-white">
+                Mahalaxmi Infra
                 <span className="hero-title-underline absolute left-0 bottom-0 w-full" />
               </span>{" "}
-              <span className="hero-title-dark">Infra</span>
             </h1>
           </div>
 

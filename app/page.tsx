@@ -32,6 +32,7 @@ export default function Home() {
       <UserGuideSection />
       <TestimonialsSection />
       <NewsArticles />
+      <ContactSection />
       <FAQSection />
       <CallButton />
       <WhatsappButton />
