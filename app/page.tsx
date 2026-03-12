@@ -17,7 +17,7 @@ const ContactSection = dynamic(() => import("@/components/contact-section"))
 const Footer = dynamic(() => import("@/components/footer").then(m => ({ default: m.Footer })))
 const CallButton = dynamic(() => import("@/components/call-button"))
 const WhatsappButton = dynamic(() => import("@/components/whatsapp-button"))
-
+const ContactPopup = dynamic(() => import("@/components/contact-popup"))
 export default function Home() {
   return (
     <main>
@@ -36,6 +36,7 @@ export default function Home() {
       <FAQSection />
       <CallButton />
       <WhatsappButton />
+      <ContactPopup />
       <Footer />
     </main>
   )

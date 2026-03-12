@@ -1,0 +1,201 @@
+"use client"
+
+import { useState, useCallback, memo, useEffect } from "react"
+import { Send, CheckCircle, X } from "lucide-react"
+
+const inputStyle = {
+    width: "100%",
+    padding: "0.8rem 1rem",
+    background: "rgba(48,83,74,0.04)",
+    border: "1px solid rgba(48,83,74,0.18)",
+    borderRadius: "0.875rem",
+    color: "#0d0d0d",
+    fontSize: "0.9rem",
+    fontFamily: "'Inter', sans-serif",
+    outline: "none",
+    transition: "border-color 0.2s",
+}
+
+const inputFocus = (e) => { e.currentTarget.style.borderColor = "#C9862b" }
+const inputBlur = (e) => { e.currentTarget.style.borderColor = "rgba(48,83,74,0.18)" }
+
+const Label = memo(({ htmlFor, children }) => (
+    <label htmlFor={htmlFor} className="block text-xs font-bold uppercase tracking-wider mb-1.5"
+        style={{ color: "#30534A", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.1em" }}>
+        {children}
+    </label>
+))
+
+const EMPTY_FORM = { name: "", mobile: "", lookingFor: "", interestedIn: "" }
+
+export default function ContactPopup() {
+    const [open, setOpen] = useState(false)
+    const [formState, setFormState] = useState(EMPTY_FORM)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [submitStatus, setSubmitStatus] = useState("idle")
+
+    useEffect(() => {
+        const t = setTimeout(() => setOpen(true), 300)
+        return () => clearTimeout(t)
+    }, [])
+
+    const handleChange = useCallback((e) => {
+        const { name, value } = e.target
+        setFormState(prev => ({ ...prev, [name]: value }))
+    }, [])
+
+    const handleSubmit = useCallback(async (e) => {
+        e.preventDefault()
+        setIsSubmitting(true)
+        setSubmitStatus("idle")
+
+        if (!formState.name || !formState.mobile || !formState.lookingFor || !formState.interestedIn) {
+            setSubmitStatus("error")
+            setIsSubmitting(false)
+            setTimeout(() => setSubmitStatus("idle"), 3000)
+            return
+        }
+
+        try {
+            const res = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                body: JSON.stringify({
+                    access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
+                    name: formState.name,
+                    subject: `New Inquiry – ${formState.lookingFor}`,
+                    message: `Name: ${formState.name}\nMobile: ${formState.mobile}\nLooking For: ${formState.lookingFor}\nInterested In: ${formState.interestedIn}`.trim(),
+                }),
+            })
+            const data = await res.json()
+            if (data.success) {
+                setSubmitStatus("success")
+                setFormState(EMPTY_FORM)
+                setTimeout(() => setOpen(false), 2000)
+            } else {
+                setSubmitStatus("error")
+                setTimeout(() => setSubmitStatus("idle"), 3000)
+            }
+        } catch (err) {
+            setSubmitStatus("error")
+            setTimeout(() => setSubmitStatus("idle"), 3000)
+        } finally {
+            setIsSubmitting(false)
+        }
+    }, [formState])
+
+    if (!open) return null
+
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)" }}
+            onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
+        >
+            <div
+                className="relative w-full max-w-md rounded-2xl p-6 sm:p-8"
+                style={{
+                    background: "#fff",
+                    boxShadow: "0 24px 64px rgba(48,83,74,0.18)",
+                    border: "1px solid rgba(48,83,74,0.1)",
+                    animation: "popIn 0.25s ease-out",
+                }}
+            >
+                <style>{`@keyframes popIn { from { opacity:0; transform:scale(0.94) translateY(12px) } to { opacity:1; transform:scale(1) translateY(0) } }`}</style>
+
+                {/* Close */}
+                <button
+                    onClick={() => setOpen(false)}
+                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-colors"
+                    style={{ background: "rgba(48,83,74,0.07)", color: "#30534A" }}
+                >
+                    <X size={15} />
+                </button>
+
+                {/* Header */}
+                <div className="mb-6">
+                    <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>Free Consultation</p>
+                    <h2 className="font-bold text-2xl text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                        Get in <span style={{ color: "#30534A" }}>Touch</span>
+                    </h2>
+                </div>
+
+                {submitStatus === "success" ? (
+                    <div className="py-10 text-center">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "#30534A" }}>
+                            <svg className="w-7 h-7 text-white" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <h3 className="font-bold text-lg text-[#0d0d0d] mb-1" style={{ fontFamily: "'Poppins', sans-serif" }}>Thank You!</h3>
+                        <p className="text-sm" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>We'll get back to you as soon as possible.</p>
+                    </div>
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <input type="hidden" name="from_name" value="Contact Form Website" />
+                        <input type="checkbox" name="botcheck" style={{ display: "none" }} />
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <div>
+                                <Label htmlFor="name">Name <span style={{ color: "#e55" }}>*</span></Label>
+                                <input type="text" id="name" name="name" value={formState.name} onChange={handleChange} required placeholder="Your name" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                            </div>
+                            <div>
+                                <Label htmlFor="mobile">Mobile <span style={{ color: "#e55" }}>*</span></Label>
+                                <input
+                                    type="tel"
+                                    id="mobile"
+                                    name="mobile"
+                                    value={formState.mobile}
+                                    onChange={(e) => {
+                                        const v = e.target.value.replace(/\D/g, "").slice(0, 10)
+                                        setFormState(prev => ({ ...prev, mobile: v }))
+                                    }}
+                                    required
+                                    placeholder="+91 XXXXX XXXXX"
+                                    maxLength={10}
+                                    pattern="\d{10}"
+                                    style={inputStyle}
+                                    onFocus={inputFocus}
+                                    onBlur={inputBlur}
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <Label htmlFor="lookingFor">Looking For <span style={{ color: "#e55" }}>*</span></Label>
+                            <select id="lookingFor" name="lookingFor" value={formState.lookingFor} onChange={handleChange} required
+                                style={{ ...inputStyle, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 1rem center", paddingRight: "2.5rem", color: formState.lookingFor ? "#0d0d0d" : "#aaa", cursor: "pointer" }}
+                                onFocus={inputFocus} onBlur={inputBlur}>
+                                <option value="" disabled>Select property type</option>
+                                <option value="Residential Plots">Residential Plots</option>
+                                <option value="Commercial Plots">Commercial Plots</option>
+                                <option value="Residential & Commercial Plots">Residential &amp; Commercial Plots</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <Label htmlFor="interestedIn">Interested In (Project + Area) <span style={{ color: "#e55" }}>*</span></Label>
+                            <input type="text" id="interestedIn" name="interestedIn" value={formState.interestedIn} onChange={handleChange} required placeholder="e.g. Green Valley – 1200 sq.ft" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                        </div>
+
+                        {submitStatus === "error" && (
+                            <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                                style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
+                                Please fill in all required fields and try again.
+                            </div>
+                        )}
+
+                        <button type="submit" disabled={isSubmitting}
+                            className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                            style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif" }}>
+                            {isSubmitting
+                                ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Sending…</>
+                                : <>Send Message <Send size={14} /></>}
+                        </button>
+                    </form>
+                )}
+            </div>
+        </div>
+    )
+}
