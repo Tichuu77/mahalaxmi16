@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useCallback, memo, useEffect } from "react"
-import { Send, CheckCircle, X } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Send, X } from "lucide-react"
 
 const inputStyle = {
     width: "100%",
@@ -29,12 +30,20 @@ const Label = memo(({ htmlFor, children }) => (
 const EMPTY_FORM = { name: "", mobile: "", lookingFor: "", interestedIn: "" }
 
 export default function ContactPopup() {
+    const router = useRouter()
     const [open, setOpen] = useState(false)
     const [formState, setFormState] = useState(EMPTY_FORM)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState("idle")
 
     useEffect(() => {
+        const shouldHideOnce = typeof window !== "undefined" && sessionStorage.getItem("hideContactPopupOnce") === "true"
+
+        if (shouldHideOnce) {
+            sessionStorage.removeItem("hideContactPopupOnce")
+            return
+        }
+
         const t = setTimeout(() => setOpen(true), 300)
         return () => clearTimeout(t)
     }, [])
@@ -69,9 +78,12 @@ export default function ContactPopup() {
             })
             const data = await res.json()
             if (data.success) {
-                setSubmitStatus("success")
                 setFormState(EMPTY_FORM)
-                setTimeout(() => setOpen(false), 2000)
+                setOpen(false)
+                if (typeof window !== "undefined") {
+                    sessionStorage.setItem("hideContactPopupOnce", "true")
+                }
+                router.push("/thank-you")
             } else {
                 setSubmitStatus("error")
                 setTimeout(() => setSubmitStatus("idle"), 3000)
@@ -82,7 +94,7 @@ export default function ContactPopup() {
         } finally {
             setIsSubmitting(false)
         }
-    }, [formState])
+    }, [formState, router])
 
     if (!open) return null
 
@@ -120,18 +132,7 @@ export default function ContactPopup() {
                     </h2>
                 </div>
 
-                {submitStatus === "success" ? (
-                    <div className="py-10 text-center">
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "#30534A" }}>
-                            <svg className="w-7 h-7 text-white" fill="none" stroke="white" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
-                        <h3 className="font-bold text-lg text-[#0d0d0d] mb-1" style={{ fontFamily: "'Poppins', sans-serif" }}>Thank You!</h3>
-                        <p className="text-sm" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>We'll get back to you as soon as possible.</p>
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                         <input type="hidden" name="from_name" value="Contact Form Website" />
                         <input type="checkbox" name="botcheck" style={{ display: "none" }} />
 
@@ -194,7 +195,6 @@ export default function ContactPopup() {
                                 : <>Send Message <Send size={14} /></>}
                         </button>
                     </form>
-                )}
             </div>
         </div>
     )

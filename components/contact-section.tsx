@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, memo } from "react"
+import { useRouter } from "next/navigation"
 import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react"
 
 // Static data at module level
@@ -107,24 +108,6 @@ const TrustBadges = memo(() => (
 ))
 TrustBadges.displayName = "TrustBadges"
 
-// Success state — static markup
-const SuccessState = memo(() => (
-  <div className="py-14 text-center">
-    <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5" style={{ background: "#30534A" }}>
-      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-      </svg>
-    </div>
-    <h3 className="font-bold mb-2 text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif", fontSize: "1.3rem" }}>
-      Message Sent!
-    </h3>
-    <p className="text-sm" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
-      We'll get back to you as soon as possible.
-    </p>
-  </div>
-))
-SuccessState.displayName = "SuccessState"
-
 type FormState = {
   name: string
   mobile: string
@@ -135,9 +118,10 @@ const EMPTY_FORM: FormState = { name: "", mobile: "", lookingFor: "", interested
 
 /* ── Section ── */
 export default function ContactSection() {
+  const router = useRouter()
   const [formState, setFormState]   = useState<FormState>(EMPTY_FORM)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "error">("idle")
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -174,8 +158,11 @@ Interested In: ${formState.interestedIn}
       })
       const data = await res.json()
       if (data.success) {
-        setSubmitStatus("success")
         setFormState(EMPTY_FORM)
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("hideContactPopupOnce", "true")
+        }
+        router.push("/thank-you")
       } else {
         setSubmitStatus("error")
         setTimeout(() => setSubmitStatus("idle"), 3000)
@@ -188,7 +175,7 @@ Interested In: ${formState.interestedIn}
       setIsSubmitting(false)
       setTimeout(() => setSubmitStatus("idle"), 5000)
     }
-  }, [formState])
+  }, [formState, router])
 
   return (
     <section id="contact" className="contact-section relative overflow-hidden">
@@ -244,10 +231,7 @@ Interested In: ${formState.interestedIn}
           <div className="lg:pl-14">
             <div className="rounded-2xl p-6 sm:p-8"
               style={{ background: "rgba(48,83,74,0.03)", border: "1px solid rgba(48,83,74,0.1)" }}>
-              {submitStatus === "success" ? (
-                <SuccessState />
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                   <input type="hidden" name="from_name" value="Contact Form Website" />
                   <input type="checkbox" name="botcheck" className="hidden" style={{ display: "none" }} />
 
@@ -356,7 +340,6 @@ Interested In: ${formState.interestedIn}
                     )}
                   </button>
                 </form>
-              )}
             </div>
           </div>
         </div>
