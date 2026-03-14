@@ -8,6 +8,10 @@ export default function ThankYouPage() {
   const router = useRouter()
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("hideContactPopupOnce", "true")
+    }
+
     const timer = setTimeout(() => {
       router.push("/")
     }, 3000)
@@ -34,7 +38,16 @@ export default function ThankYouPage() {
           Redirecting to home in 3 seconds…
         </p>
 
-        <Link href="/" className="inline-block mt-6 text-sm font-semibold" style={{ color: "#30534A", textDecoration: "underline" }}>
+        <Link
+          href="/"
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("hideContactPopupOnce", "true")
+            }
+          }}
+          className="inline-block mt-6 text-sm font-semibold"
+          style={{ color: "#30534A", textDecoration: "underline" }}
+        >
           Go to home now
         </Link>
       </div>

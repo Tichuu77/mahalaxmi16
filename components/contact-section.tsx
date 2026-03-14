@@ -159,6 +159,9 @@ Interested In: ${formState.interestedIn}
       const data = await res.json()
       if (data.success) {
         setFormState(EMPTY_FORM)
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("hideContactPopupOnce", "true")
+        }
         router.push("/thank-you")
       } else {
         setSubmitStatus("error")

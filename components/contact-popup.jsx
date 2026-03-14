@@ -37,6 +37,13 @@ export default function ContactPopup() {
     const [submitStatus, setSubmitStatus] = useState("idle")
 
     useEffect(() => {
+        const shouldHideOnce = typeof window !== "undefined" && sessionStorage.getItem("hideContactPopupOnce") === "true"
+
+        if (shouldHideOnce) {
+            sessionStorage.removeItem("hideContactPopupOnce")
+            return
+        }
+
         const t = setTimeout(() => setOpen(true), 300)
         return () => clearTimeout(t)
     }, [])
@@ -73,6 +80,9 @@ export default function ContactPopup() {
             if (data.success) {
                 setFormState(EMPTY_FORM)
                 setOpen(false)
+                if (typeof window !== "undefined") {
+                    sessionStorage.setItem("hideContactPopupOnce", "true")
+                }
                 router.push("/thank-you")
             } else {
                 setSubmitStatus("error")
