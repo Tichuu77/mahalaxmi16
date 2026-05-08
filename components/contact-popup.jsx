@@ -19,6 +19,7 @@ const inputStyle = {
 
 const inputFocus = (e) => { e.currentTarget.style.borderColor = "#C9862b" }
 const inputBlur = (e) => { e.currentTarget.style.borderColor = "rgba(48,83,74,0.18)" }
+const COOLDOWN_MS = 6 * 60 * 60 * 1000
 
 const Label = memo(({ htmlFor, children }) => (
     <label htmlFor={htmlFor} className="block text-xs font-bold uppercase tracking-wider mb-1.5"
@@ -37,15 +38,38 @@ export default function ContactPopup() {
     const [submitStatus, setSubmitStatus] = useState("idle")
 
     useEffect(() => {
-        const shouldHideOnce = typeof window !== "undefined" && sessionStorage.getItem("hideContactPopupOnce") === "true"
+        if (typeof window === "undefined") return
 
+        const alreadySubmitted = localStorage.getItem("formSubmitted") === "true"
+        const submittedAt = parseInt(localStorage.getItem("formSubmittedAt") || "0")
+        const withinCooldown = alreadySubmitted && Date.now() - submittedAt < COOLDOWN_MS
+        if (withinCooldown) return
+
+        const shouldHideOnce = sessionStorage.getItem("hideContactPopupOnce") === "true"
         if (shouldHideOnce) {
             sessionStorage.removeItem("hideContactPopupOnce")
             return
         }
 
-        const t = setTimeout(() => setOpen(true), 300)
-        return () => clearTimeout(t)
+        let triggered = false
+
+        const handleScroll = () => {
+            if (triggered) return
+            if (window.scrollY > 300) {
+                triggered = true
+                setOpen(true)
+                window.removeEventListener("scroll", handleScroll)
+            }
+        }
+
+        const timer = setTimeout(() => {
+            window.addEventListener("scroll", handleScroll)
+        }, 1000)
+
+        return () => {
+            clearTimeout(timer)
+            window.removeEventListener("scroll", handleScroll)
+        }
     }, [])
 
     const handleChange = useCallback((e) => {
@@ -55,15 +79,28 @@ export default function ContactPopup() {
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault()
-        setIsSubmitting(true)
-        setSubmitStatus("idle")
 
+        // Rate limit check
+        const alreadySubmitted = localStorage.getItem("formSubmitted") === "true"
+        const submittedAt = parseInt(localStorage.getItem("formSubmittedAt") || "0")
+        if (alreadySubmitted && Date.now() - submittedAt < COOLDOWN_MS) {
+            setSubmitStatus("rateLimit")
+            return
+        }
+
+        // Validation
         if (!formState.name || !formState.mobile || !formState.lookingFor || !formState.interestedIn) {
             setSubmitStatus("error")
-            setIsSubmitting(false)
             setTimeout(() => setSubmitStatus("idle"), 3000)
             return
         }
+
+        // Lock before fetch to prevent double submit
+        localStorage.setItem("formSubmitted", "true")
+        localStorage.setItem("formSubmittedAt", String(Date.now()))
+
+        setIsSubmitting(true)
+        setSubmitStatus("idle")
 
         try {
             const res = await fetch("https://api.web3forms.com/submit", {
@@ -80,15 +117,19 @@ export default function ContactPopup() {
             if (data.success) {
                 setFormState(EMPTY_FORM)
                 setOpen(false)
-                if (typeof window !== "undefined") {
-                    sessionStorage.setItem("hideContactPopupOnce", "true")
-                }
+                sessionStorage.setItem("hideContactPopupOnce", "true")
                 router.push("/thank-you")
             } else {
+                // Unlock on API failure
+                localStorage.removeItem("formSubmitted")
+                localStorage.removeItem("formSubmittedAt")
                 setSubmitStatus("error")
                 setTimeout(() => setSubmitStatus("idle"), 3000)
             }
         } catch (err) {
+            // Unlock on network error
+            localStorage.removeItem("formSubmitted")
+            localStorage.removeItem("formSubmittedAt")
             setSubmitStatus("error")
             setTimeout(() => setSubmitStatus("idle"), 3000)
         } finally {
@@ -115,7 +156,6 @@ export default function ContactPopup() {
             >
                 <style>{`@keyframes popIn { from { opacity:0; transform:scale(0.94) translateY(12px) } to { opacity:1; transform:scale(1) translateY(0) } }`}</style>
 
-                {/* Close */}
                 <button
                     onClick={() => setOpen(false)}
                     className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-colors"
@@ -124,7 +164,6 @@ export default function ContactPopup() {
                     <X size={15} />
                 </button>
 
-                {/* Header */}
                 <div className="mb-6">
                     <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>Free Consultation</p>
                     <h2 className="font-bold text-2xl text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif" }}>
@@ -133,68 +172,75 @@ export default function ContactPopup() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                        <input type="hidden" name="from_name" value="Contact Form Website" />
-                        <input type="checkbox" name="botcheck" style={{ display: "none" }} />
+                    <input type="hidden" name="from_name" value="Contact Form Website" />
+                    <input type="checkbox" name="botcheck" style={{ display: "none" }} />
 
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <Label htmlFor="name">Name <span style={{ color: "#e55" }}>*</span></Label>
-                                <input type="text" id="name" name="name" value={formState.name} onChange={handleChange} required placeholder="Your name" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
-                            </div>
-                            <div>
-                                <Label htmlFor="mobile">Mobile <span style={{ color: "#e55" }}>*</span></Label>
-                                <input
-                                    type="tel"
-                                    id="mobile"
-                                    name="mobile"
-                                    value={formState.mobile}
-                                    onChange={(e) => {
-                                        const v = e.target.value.replace(/\D/g, "").slice(0, 10)
-                                        setFormState(prev => ({ ...prev, mobile: v }))
-                                    }}
-                                    required
-                                    placeholder="+91 XXXXX XXXXX"
-                                    maxLength={10}
-                                    pattern="\d{10}"
-                                    style={inputStyle}
-                                    onFocus={inputFocus}
-                                    onBlur={inputBlur}
-                                />
-                            </div>
-                        </div>
-
+                    <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <Label htmlFor="lookingFor">Looking For <span style={{ color: "#e55" }}>*</span></Label>
-                            <select id="lookingFor" name="lookingFor" value={formState.lookingFor} onChange={handleChange} required
-                                style={{ ...inputStyle, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 1rem center", paddingRight: "2.5rem", color: formState.lookingFor ? "#0d0d0d" : "#aaa", cursor: "pointer" }}
-                                onFocus={inputFocus} onBlur={inputBlur}>
-                                <option value="" disabled>Select property type</option>
-                                <option value="Residential Plots">Residential Plots</option>
-                                <option value="Commercial Plots">Commercial Plots</option>
-                                <option value="Residential & Commercial Plots">Residential &amp; Commercial Plots</option>
-                            </select>
+                            <Label htmlFor="name">Name <span style={{ color: "#e55" }}>*</span></Label>
+                            <input type="text" id="name" name="name" value={formState.name} onChange={handleChange} required placeholder="Your name" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
                         </div>
-
                         <div>
-                            <Label htmlFor="interestedIn">Interested In (Project + Area) <span style={{ color: "#e55" }}>*</span></Label>
-                            <input type="text" id="interestedIn" name="interestedIn" value={formState.interestedIn} onChange={handleChange} required placeholder="e.g. Green Valley – 1200 sq.ft" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                            <Label htmlFor="mobile">Mobile <span style={{ color: "#e55" }}>*</span></Label>
+                            <input
+                                type="tel"
+                                id="mobile"
+                                name="mobile"
+                                value={formState.mobile}
+                                onChange={(e) => {
+                                    const v = e.target.value.replace(/\D/g, "").slice(0, 10)
+                                    setFormState(prev => ({ ...prev, mobile: v }))
+                                }}
+                                required
+                                placeholder="+91 XXXXX XXXXX"
+                                maxLength={10}
+                                pattern="\d{10}"
+                                style={inputStyle}
+                                onFocus={inputFocus}
+                                onBlur={inputBlur}
+                            />
                         </div>
+                    </div>
 
-                        {submitStatus === "error" && (
-                            <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                                style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
-                                Please fill in all required fields and try again.
-                            </div>
-                        )}
+                    <div>
+                        <Label htmlFor="lookingFor">Looking For <span style={{ color: "#e55" }}>*</span></Label>
+                        <select id="lookingFor" name="lookingFor" value={formState.lookingFor} onChange={handleChange} required
+                            style={{ ...inputStyle, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 1rem center", paddingRight: "2.5rem", color: formState.lookingFor ? "#0d0d0d" : "#aaa", cursor: "pointer" }}
+                            onFocus={inputFocus} onBlur={inputBlur}>
+                            <option value="" disabled>Select property type</option>
+                            <option value="Residential Plots">Residential Plots</option>
+                            <option value="Commercial Plots">Commercial Plots</option>
+                            <option value="Residential & Commercial Plots">Residential &amp; Commercial Plots</option>
+                        </select>
+                    </div>
 
-                        <button type="submit" disabled={isSubmitting}
-                            className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
-                            style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif" }}>
-                            {isSubmitting
-                                ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Sending…</>
-                                : <>Send Message <Send size={14} /></>}
-                        </button>
-                    </form>
+                    <div>
+                        <Label htmlFor="interestedIn">Interested In (Project + Area) <span style={{ color: "#e55" }}>*</span></Label>
+                        <input type="text" id="interestedIn" name="interestedIn" value={formState.interestedIn} onChange={handleChange} required placeholder="e.g. Green Valley – 1200 sq.ft" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                    </div>
+
+                    {submitStatus === "error" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
+                            Please fill in all required fields and try again.
+                        </div>
+                    )}
+
+                    {submitStatus === "rateLimit" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                            Limit reached. You can submit again after 6 hours.
+                        </div>
+                    )}
+
+                    <button type="submit" disabled={isSubmitting || submitStatus === "rateLimit"}
+                        className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                        style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif" }}>
+                        {isSubmitting
+                            ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Sending…</>
+                            : <>Send Message <Send size={14} /></>}
+                    </button>
+                </form>
             </div>
         </div>
     )
