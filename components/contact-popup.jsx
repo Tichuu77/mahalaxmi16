@@ -1,8 +1,16 @@
 "use client"
 
-import { useState, useCallback, memo, useEffect } from "react"
+import { useState, useCallback, memo, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Send, X } from "lucide-react"
+import {
+    normalizePhone10,
+    isBlockedOrFakePhone10,
+    hasSubmittedThisPhone,
+    recordSubmittedPhone,
+    validateFillDuration,
+} from "@/lib/form-protection"
+import { ContactTurnstile, turnstileSiteKeyConfigured } from "@/components/contact-turnstile"
 
 const inputStyle = {
     width: "100%",
@@ -19,7 +27,7 @@ const inputStyle = {
 
 const inputFocus = (e) => { e.currentTarget.style.borderColor = "#C9862b" }
 const inputBlur = (e) => { e.currentTarget.style.borderColor = "rgba(48,83,74,0.18)" }
-const COOLDOWN_MS = 6 * 60 * 60 * 1000
+const COOLDOWN_MS = 12 * 60 * 60 * 1000
 
 const Label = memo(({ htmlFor, children }) => (
     <label htmlFor={htmlFor} className="block text-xs font-bold uppercase tracking-wider mb-1.5"
@@ -36,6 +44,18 @@ export default function ContactPopup() {
     const [formState, setFormState] = useState(EMPTY_FORM)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState("idle")
+    const [honeypot, setHoneypot] = useState("")
+    const [turnstileToken, setTurnstileToken] = useState("")
+    const formStartedAtRef = useRef(null)
+    const humanRef = useRef(false)
+
+    const markFormStarted = useCallback(() => {
+        if (formStartedAtRef.current === null) formStartedAtRef.current = Date.now()
+    }, [])
+
+    const markHuman = useCallback(() => {
+        humanRef.current = true
+    }, [])
 
     useEffect(() => {
         if (typeof window === "undefined") return
@@ -51,36 +71,69 @@ export default function ContactPopup() {
             return
         }
 
-        let triggered = false
+        let observer = null
+        let cancelled = false
+        let rafId = 0
 
-        const handleScroll = () => {
-            if (triggered) return
-            if (window.scrollY > 300) {
-                triggered = true
-                setOpen(true)
-                window.removeEventListener("scroll", handleScroll)
+        const attachWhenReady = (attempt = 0) => {
+            if (cancelled || attempt > 240) return
+
+            const contactSection = document.getElementById("contact")
+            if (!contactSection) {
+                rafId = requestAnimationFrame(() => attachWhenReady(attempt + 1))
+                return
             }
+
+            let triggered = false
+            observer = new IntersectionObserver(
+                (entries) => {
+                    for (const entry of entries) {
+                        if (!entry.isIntersecting || triggered) continue
+                        triggered = true
+                        setOpen(true)
+                        observer?.disconnect()
+                        observer = null
+                    }
+                },
+                {
+                    root: null,
+                    threshold: 0.12,
+                    rootMargin: "0px 0px -10% 0px",
+                }
+            )
+            observer.observe(contactSection)
         }
 
         const timer = setTimeout(() => {
-            window.addEventListener("scroll", handleScroll)
-        }, 1000)
+            attachWhenReady()
+        }, 400)
 
         return () => {
+            cancelled = true
             clearTimeout(timer)
-            window.removeEventListener("scroll", handleScroll)
+            cancelAnimationFrame(rafId)
+            observer?.disconnect()
         }
     }, [])
 
+    useEffect(() => {
+        if (!open) return
+        formStartedAtRef.current = null
+        humanRef.current = false
+        setHoneypot("")
+        setTurnstileToken("")
+        setSubmitStatus("idle")
+    }, [open])
+
     const handleChange = useCallback((e) => {
+        markFormStarted()
         const { name, value } = e.target
         setFormState(prev => ({ ...prev, [name]: value }))
-    }, [])
+    }, [markFormStarted])
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault()
 
-        // Rate limit check
         const alreadySubmitted = localStorage.getItem("formSubmitted") === "true"
         const submittedAt = parseInt(localStorage.getItem("formSubmittedAt") || "0")
         if (alreadySubmitted && Date.now() - submittedAt < COOLDOWN_MS) {
@@ -88,46 +141,85 @@ export default function ContactPopup() {
             return
         }
 
-        // Validation
+        if (honeypot.trim() !== "") {
+            setSubmitStatus("spam")
+            setTimeout(() => setSubmitStatus("idle"), 4000)
+            return
+        }
+
+        if (!humanRef.current) {
+            setSubmitStatus("interaction")
+            setTimeout(() => setSubmitStatus("idle"), 4000)
+            return
+        }
+
+        if (turnstileSiteKeyConfigured() && !turnstileToken) {
+            setSubmitStatus("captcha")
+            setTimeout(() => setSubmitStatus("idle"), 4000)
+            return
+        }
+
+        if (!validateFillDuration(formStartedAtRef.current)) {
+            setSubmitStatus("timing")
+            setTimeout(() => setSubmitStatus("idle"), 4000)
+            return
+        }
+
         if (!formState.name || !formState.mobile || !formState.lookingFor || !formState.interestedIn) {
             setSubmitStatus("error")
             setTimeout(() => setSubmitStatus("idle"), 3000)
             return
         }
 
-        // Lock before fetch to prevent double submit
+        const phone10 = normalizePhone10(formState.mobile)
+        if (isBlockedOrFakePhone10(phone10)) {
+            setSubmitStatus("phone")
+            setTimeout(() => setSubmitStatus("idle"), 4000)
+            return
+        }
+
+        if (hasSubmittedThisPhone(phone10)) {
+            setSubmitStatus("duplicatePhone")
+            setTimeout(() => setSubmitStatus("idle"), 4000)
+            return
+        }
+
         localStorage.setItem("formSubmitted", "true")
         localStorage.setItem("formSubmittedAt", String(Date.now()))
 
         setIsSubmitting(true)
         setSubmitStatus("idle")
 
+        const payload = {
+            access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
+            name: formState.name,
+            subject: `New Inquiry – ${formState.lookingFor}`,
+            message: `Name: ${formState.name}\nMobile: ${phone10}\nLooking For: ${formState.lookingFor}\nInterested In: ${formState.interestedIn}`.trim(),
+        }
+        if (turnstileToken) {
+            payload["cf-turnstile-response"] = turnstileToken
+        }
+
         try {
             const res = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
-                body: JSON.stringify({
-                    access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
-                    name: formState.name,
-                    subject: `New Inquiry – ${formState.lookingFor}`,
-                    message: `Name: ${formState.name}\nMobile: ${formState.mobile}\nLooking For: ${formState.lookingFor}\nInterested In: ${formState.interestedIn}`.trim(),
-                }),
+                body: JSON.stringify(payload),
             })
             const data = await res.json()
             if (data.success) {
+                recordSubmittedPhone(phone10)
                 setFormState(EMPTY_FORM)
                 setOpen(false)
                 sessionStorage.setItem("hideContactPopupOnce", "true")
                 router.push("/thank-you")
             } else {
-                // Unlock on API failure
                 localStorage.removeItem("formSubmitted")
                 localStorage.removeItem("formSubmittedAt")
                 setSubmitStatus("error")
                 setTimeout(() => setSubmitStatus("idle"), 3000)
             }
         } catch (err) {
-            // Unlock on network error
             localStorage.removeItem("formSubmitted")
             localStorage.removeItem("formSubmittedAt")
             setSubmitStatus("error")
@@ -135,7 +227,7 @@ export default function ContactPopup() {
         } finally {
             setIsSubmitting(false)
         }
-    }, [formState, router])
+    }, [formState, router, honeypot, turnstileToken])
 
     if (!open) return null
 
@@ -171,23 +263,53 @@ export default function ContactPopup() {
                     </h2>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form
+                    onSubmit={handleSubmit}
+                    className="space-y-4"
+                    onPointerDownCapture={markHuman}
+                    onKeyDownCapture={markHuman}
+                    onFocusCapture={markHuman}
+                >
                     <input type="hidden" name="from_name" value="Contact Form Website" />
-                    <input type="checkbox" name="botcheck" style={{ display: "none" }} />
+                    <input type="checkbox" name="botcheck" style={{ display: "none" }} tabIndex={-1} />
+
+                    <input
+                        type="text"
+                        name="website"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                        className="absolute opacity-0 w-px h-px overflow-hidden"
+                        style={{ left: "-9999px" }}
+                        aria-hidden="true"
+                    />
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <Label htmlFor="name">Name <span style={{ color: "#e55" }}>*</span></Label>
-                            <input type="text" id="name" name="name" value={formState.name} onChange={handleChange} required placeholder="Your name" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                            <Label htmlFor="popup-name">Name <span style={{ color: "#e55" }}>*</span></Label>
+                            <input
+                                type="text"
+                                id="popup-name"
+                                name="name"
+                                value={formState.name}
+                                onChange={handleChange}
+                                onFocus={(e) => { markFormStarted(); inputFocus(e) }}
+                                required
+                                placeholder="Your name"
+                                style={inputStyle}
+                                onBlur={inputBlur}
+                            />
                         </div>
                         <div>
-                            <Label htmlFor="mobile">Mobile <span style={{ color: "#e55" }}>*</span></Label>
+                            <Label htmlFor="popup-mobile">Mobile <span style={{ color: "#e55" }}>*</span></Label>
                             <input
                                 type="tel"
-                                id="mobile"
+                                id="popup-mobile"
                                 name="mobile"
                                 value={formState.mobile}
                                 onChange={(e) => {
+                                    markFormStarted()
                                     const v = e.target.value.replace(/\D/g, "").slice(0, 10)
                                     setFormState(prev => ({ ...prev, mobile: v }))
                                 }}
@@ -196,17 +318,24 @@ export default function ContactPopup() {
                                 maxLength={10}
                                 pattern="\d{10}"
                                 style={inputStyle}
-                                onFocus={inputFocus}
+                                onFocus={(e) => { markFormStarted(); inputFocus(e) }}
                                 onBlur={inputBlur}
                             />
                         </div>
                     </div>
 
                     <div>
-                        <Label htmlFor="lookingFor">Looking For <span style={{ color: "#e55" }}>*</span></Label>
-                        <select id="lookingFor" name="lookingFor" value={formState.lookingFor} onChange={handleChange} required
+                        <Label htmlFor="popup-lookingFor">Looking For <span style={{ color: "#e55" }}>*</span></Label>
+                        <select
+                            id="popup-lookingFor"
+                            name="lookingFor"
+                            value={formState.lookingFor}
+                            onChange={handleChange}
+                            onFocus={(e) => { markFormStarted(); inputFocus(e) }}
+                            required
                             style={{ ...inputStyle, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 1rem center", paddingRight: "2.5rem", color: formState.lookingFor ? "#0d0d0d" : "#aaa", cursor: "pointer" }}
-                            onFocus={inputFocus} onBlur={inputBlur}>
+                            onBlur={inputBlur}
+                        >
                             <option value="" disabled>Select property type</option>
                             <option value="Residential Plots">Residential Plots</option>
                             <option value="Commercial Plots">Commercial Plots</option>
@@ -215,9 +344,25 @@ export default function ContactPopup() {
                     </div>
 
                     <div>
-                        <Label htmlFor="interestedIn">Interested In (Project + Area) <span style={{ color: "#e55" }}>*</span></Label>
-                        <input type="text" id="interestedIn" name="interestedIn" value={formState.interestedIn} onChange={handleChange} required placeholder="e.g. Green Valley – 1200 sq.ft" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                        <Label htmlFor="popup-interestedIn">Interested In (Project + Area) <span style={{ color: "#e55" }}>*</span></Label>
+                        <input
+                            type="text"
+                            id="popup-interestedIn"
+                            name="interestedIn"
+                            value={formState.interestedIn}
+                            onChange={handleChange}
+                            onFocus={(e) => { markFormStarted(); inputFocus(e) }}
+                            required
+                            placeholder="e.g. Green Valley – 1200 sq.ft"
+                            style={inputStyle}
+                            onBlur={inputBlur}
+                        />
                     </div>
+
+                    <ContactTurnstile
+                        onSuccess={setTurnstileToken}
+                        onExpire={() => setTurnstileToken("")}
+                    />
 
                     {submitStatus === "error" && (
                         <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
@@ -229,7 +374,49 @@ export default function ContactPopup() {
                     {submitStatus === "rateLimit" && (
                         <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
                             style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
-                            Limit reached. You can submit again after 6 hours.
+                            You recently submitted an inquiry. Please try again after 12 hours.
+                        </div>
+                    )}
+
+                    {submitStatus === "spam" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
+                            Submission could not be processed.
+                        </div>
+                    )}
+
+                    {submitStatus === "timing" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                            Please take a few seconds to complete the form before sending.
+                        </div>
+                    )}
+
+                    {submitStatus === "interaction" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                            Use the form fields or buttons to submit (keyboard and touch are supported).
+                        </div>
+                    )}
+
+                    {submitStatus === "captcha" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                            Complete the verification above before sending.
+                        </div>
+                    )}
+
+                    {submitStatus === "phone" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
+                            Enter a valid 10-digit Indian mobile number.
+                        </div>
+                    )}
+
+                    {submitStatus === "duplicatePhone" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                            This number already submitted from this device. Call us if you need help.
                         </div>
                     )}
 

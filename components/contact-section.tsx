@@ -1,8 +1,16 @@
 "use client"
 
-import { useState, useCallback, memo } from "react"
+import { useState, useCallback, memo, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react"
+import {
+  normalizePhone10,
+  isBlockedOrFakePhone10,
+  hasSubmittedThisPhone,
+  recordSubmittedPhone,
+  validateFillDuration,
+} from "@/lib/form-protection"
+import { ContactTurnstile, turnstileSiteKeyConfigured } from "@/components/contact-turnstile"
 
 // Static data at module level
 const contacts = [
@@ -116,69 +124,174 @@ type FormState = {
 }
 const EMPTY_FORM: FormState = { name: "", mobile: "", lookingFor: "", interestedIn: "" }
 
+type ContactSectionProps = {
+  /** Anchor id for in-page links (e.g. #contact). Only one section should use `contact`. */
+  sectionId?: string
+}
+
+const COOLDOWN_MS = 12 * 60 * 60 * 1000
+
+type SubmitStatus =
+  | "idle"
+  | "error"
+  | "rateLimit"
+  | "spam"
+  | "timing"
+  | "interaction"
+  | "captcha"
+  | "phone"
+  | "duplicatePhone"
+
 /* ── Section ── */
-export default function ContactSection() {
+export default function ContactSection({ sectionId = "contact" }: ContactSectionProps) {
   const router = useRouter()
-  const [formState, setFormState]   = useState<FormState>(EMPTY_FORM)
+  const fieldId = (field: string) => `${sectionId}-${field}`
+  const [formState, setFormState] = useState<FormState>(EMPTY_FORM)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "error">("idle")
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle")
+  const [honeypot, setHoneypot] = useState("")
+  const [turnstileToken, setTurnstileToken] = useState("")
+  const formStartedAtRef = useRef<number | null>(null)
+  const humanRef = useRef(false)
+
+  const markFormStarted = useCallback(() => {
+    if (formStartedAtRef.current === null) formStartedAtRef.current = Date.now()
+  }, [])
+
+  const markHuman = useCallback(() => {
+    humanRef.current = true
+  }, [])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    markFormStarted()
     const { name, value } = e.target
     setFormState(prev => ({ ...prev, [name]: value }))
-  }, [])
+  }, [markFormStarted])
+
+  const handleMobileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    markFormStarted()
+    const v = e.target.value.replace(/\D/g, "").slice(0, 10)
+    setFormState(prev => ({ ...prev, mobile: v }))
+  }, [markFormStarted])
 
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitStatus("idle")
+
+    const alreadySubmitted = typeof window !== "undefined" && localStorage.getItem("formSubmitted") === "true"
+    const submittedAt = typeof window !== "undefined" ? parseInt(localStorage.getItem("formSubmittedAt") || "0", 10) : 0
+    if (alreadySubmitted && Date.now() - submittedAt < COOLDOWN_MS) {
+      setSubmitStatus("rateLimit")
+      setTimeout(() => setSubmitStatus("idle"), 5000)
+      return
+    }
+
+    if (honeypot.trim() !== "") {
+      setSubmitStatus("spam")
+      setTimeout(() => setSubmitStatus("idle"), 4000)
+      return
+    }
+
+    if (!humanRef.current) {
+      setSubmitStatus("interaction")
+      setTimeout(() => setSubmitStatus("idle"), 4000)
+      return
+    }
+
+    if (turnstileSiteKeyConfigured() && !turnstileToken) {
+      setSubmitStatus("captcha")
+      setTimeout(() => setSubmitStatus("idle"), 4000)
+      return
+    }
+
+    if (!validateFillDuration(formStartedAtRef.current)) {
+      setSubmitStatus("timing")
+      setTimeout(() => setSubmitStatus("idle"), 4000)
+      return
+    }
 
     if (!formState.name || !formState.mobile || !formState.lookingFor || !formState.interestedIn) {
       setSubmitStatus("error")
-      setIsSubmitting(false)
       setTimeout(() => setSubmitStatus("idle"), 3000)
       return
+    }
+
+    const phone10 = normalizePhone10(formState.mobile)
+    if (isBlockedOrFakePhone10(phone10)) {
+      setSubmitStatus("phone")
+      setTimeout(() => setSubmitStatus("idle"), 4000)
+      return
+    }
+
+    if (hasSubmittedThisPhone(phone10)) {
+      setSubmitStatus("duplicatePhone")
+      setTimeout(() => setSubmitStatus("idle"), 4000)
+      return
+    }
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("formSubmitted", "true")
+      localStorage.setItem("formSubmittedAt", String(Date.now()))
+    }
+
+    setIsSubmitting(true)
+    setSubmitStatus("idle")
+
+    const payload: Record<string, string> = {
+      access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
+      name: formState.name,
+      subject: `New Inquiry – ${formState.lookingFor}`,
+      message: `
+Name: ${formState.name}
+Mobile: ${phone10}
+Looking For: ${formState.lookingFor}
+Interested In: ${formState.interestedIn}
+      `.trim(),
+    }
+    if (turnstileToken) {
+      payload["cf-turnstile-response"] = turnstileToken
     }
 
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
-          name: formState.name,
-          subject: `New Inquiry – ${formState.lookingFor}`,
-          message: `
-Name: ${formState.name}
-Mobile: ${formState.mobile}
-Looking For: ${formState.lookingFor}
-Interested In: ${formState.interestedIn}
-          `.trim(),
-        }),
+        body: JSON.stringify(payload),
       })
       const data = await res.json()
       if (data.success) {
+        recordSubmittedPhone(phone10)
         setFormState(EMPTY_FORM)
+        formStartedAtRef.current = null
+        humanRef.current = false
+        setTurnstileToken("")
+        setHoneypot("")
         if (typeof window !== "undefined") {
           sessionStorage.setItem("hideContactPopupOnce", "true")
         }
         router.push("/thank-you")
       } else {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("formSubmitted")
+          localStorage.removeItem("formSubmittedAt")
+        }
         setSubmitStatus("error")
         setTimeout(() => setSubmitStatus("idle"), 3000)
       }
     } catch (err) {
       console.error(err)
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("formSubmitted")
+        localStorage.removeItem("formSubmittedAt")
+      }
       setSubmitStatus("error")
       setTimeout(() => setSubmitStatus("idle"), 3000)
     } finally {
       setIsSubmitting(false)
-      setTimeout(() => setSubmitStatus("idle"), 5000)
     }
-  }, [formState, router])
+  }, [formState, router, honeypot, turnstileToken])
 
   return (
-    <section id="contact" className="contact-section relative overflow-hidden">
+    <section id={sectionId} className="contact-section relative overflow-hidden">
       {/* Right accent stripe */}
       <div className="contact-accent-bar absolute top-0 right-0 bottom-0 w-1" />
 
@@ -231,39 +344,59 @@ Interested In: ${formState.interestedIn}
           <div className="lg:pl-14">
             <div className="rounded-2xl p-6 sm:p-8"
               style={{ background: "rgba(48,83,74,0.03)", border: "1px solid rgba(48,83,74,0.1)" }}>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form
+                  onSubmit={handleSubmit}
+                  className="space-y-4"
+                  onPointerDownCapture={markHuman}
+                  onKeyDownCapture={markHuman}
+                  onFocusCapture={markHuman}
+                >
                   <input type="hidden" name="from_name" value="Contact Form Website" />
-                  <input type="checkbox" name="botcheck" className="hidden" style={{ display: "none" }} />
+                  <input type="checkbox" name="botcheck" className="hidden" style={{ display: "none" }} tabIndex={-1} />
+
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    className="absolute opacity-0 w-px h-px overflow-hidden"
+                    style={{ left: "-9999px" }}
+                    aria-hidden="true"
+                  />
 
                   {/* Name + Mobile */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name">Name <span style={{ color: "#e55" }}>*</span></Label>
+                      <Label htmlFor={fieldId("name")}>Name <span style={{ color: "#e55" }}>*</span></Label>
                       <input
                         type="text"
-                        id="name"
+                        id={fieldId("name")}
                         name="name"
                         value={formState.name}
                         onChange={handleChange}
                         required
                         placeholder="Enter your name"
                         style={inputStyle}
-                        onFocus={inputFocus}
+                        onFocus={(e) => { markFormStarted(); inputFocus(e) }}
                         onBlur={inputBlur}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="mobile">Mobile Number <span style={{ color: "#e55" }}>*</span></Label>
+                      <Label htmlFor={fieldId("mobile")}>Mobile Number <span style={{ color: "#e55" }}>*</span></Label>
                       <input
                         type="tel"
-                        id="mobile"
+                        id={fieldId("mobile")}
                         name="mobile"
                         value={formState.mobile}
-                        onChange={handleChange}
+                        onChange={handleMobileChange}
                         required
                         placeholder="+91 XXXXX XXXXX"
+                        maxLength={10}
+                        pattern="\d{10}"
                         style={inputStyle}
-                        onFocus={inputFocus}
+                        onFocus={(e) => { markFormStarted(); inputFocus(e) }}
                         onBlur={inputBlur}
                       />
                     </div>
@@ -271,9 +404,9 @@ Interested In: ${formState.interestedIn}
 
                   {/* Looking For */}
                   <div>
-                    <Label htmlFor="lookingFor">Looking For <span style={{ color: "#e55" }}>*</span></Label>
+                    <Label htmlFor={fieldId("lookingFor")}>Looking For <span style={{ color: "#e55" }}>*</span></Label>
                     <select
-                      id="lookingFor"
+                      id={fieldId("lookingFor")}
                       name="lookingFor"
                       value={formState.lookingFor}
                       onChange={handleChange}
@@ -288,7 +421,7 @@ Interested In: ${formState.interestedIn}
                         color: formState.lookingFor ? "#0d0d0d" : "#aaa",
                         cursor: "pointer",
                       }}
-                      onFocus={inputFocus}
+                      onFocus={(e) => { markFormStarted(); inputFocus(e) }}
                       onBlur={inputBlur}
                     >
                       <option value="" disabled>Select property type</option>
@@ -300,22 +433,23 @@ Interested In: ${formState.interestedIn}
 
                   {/* Interested In */}
                   <div>
-                    <Label htmlFor="interestedIn">Interested In (Project with Area) <span style={{ color: "#e55" }}>*</span></Label>
+                    <Label htmlFor={fieldId("interestedIn")}>Interested In (Project with Area) <span style={{ color: "#e55" }}>*</span></Label>
                     <input
                       type="text"
-                      id="interestedIn"
+                      id={fieldId("interestedIn")}
                       name="interestedIn"
                       value={formState.interestedIn}
                       onChange={handleChange}
                       required
                       placeholder="e.g. Green Valley – 1200 sq.ft"
                       style={inputStyle}
-                      onFocus={inputFocus}
+                      onFocus={(e) => { markFormStarted(); inputFocus(e) }}
                       onBlur={inputBlur}
                     />
                   </div>
 
-                  {/* Error */}
+                  <ContactTurnstile onSuccess={setTurnstileToken} onExpire={() => setTurnstileToken("")} />
+
                   {submitStatus === "error" && (
                     <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
                       style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
@@ -326,10 +460,59 @@ Interested In: ${formState.interestedIn}
                     </div>
                   )}
 
+                  {submitStatus === "rateLimit" && (
+                    <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
+                      style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                      You recently submitted an inquiry. Please try again after 12 hours.
+                    </div>
+                  )}
+
+                  {submitStatus === "spam" && (
+                    <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
+                      style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
+                      Submission could not be processed.
+                    </div>
+                  )}
+
+                  {submitStatus === "timing" && (
+                    <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
+                      style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                      Please take a few seconds to complete the form before sending.
+                    </div>
+                  )}
+
+                  {submitStatus === "interaction" && (
+                    <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
+                      style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                      Use the form fields or buttons to submit (keyboard and touch are supported).
+                    </div>
+                  )}
+
+                  {submitStatus === "captcha" && (
+                    <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
+                      style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                      Complete the verification above before sending.
+                    </div>
+                  )}
+
+                  {submitStatus === "phone" && (
+                    <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
+                      style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
+                      Enter a valid 10-digit Indian mobile number.
+                    </div>
+                  )}
+
+                  {submitStatus === "duplicatePhone" && (
+                    <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
+                      style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
+                      This number already submitted from this device. Call us if you need help.
+                    </div>
+                  )}
+
                   {/* Submit */}
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || submitStatus === "rateLimit"}
                     className="w-full flex items-center justify-center gap-2 font-bold text-sm py-4 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                     style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.04em" }}
                   >

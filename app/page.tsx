@@ -23,7 +23,7 @@ export default function Home() {
     <main>
       <Navigation />
       <HeroSection />
-      <ContactSection />
+      <ContactSection sectionId="contact-intro" />
       <AboutSection />
       <AmenitiesSection />
       <ProjectsSection />
