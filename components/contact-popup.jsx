@@ -30,7 +30,7 @@ const inputBlur = (e) => { e.currentTarget.style.borderColor = "rgba(48,83,74,0.
 const COOLDOWN_MS = 12 * 60 * 60 * 1000
 
 const Label = memo(({ htmlFor, children }) => (
-    <label htmlFor={htmlFor} className="block text-xs font-bold uppercase tracking-wider mb-1.5"
+    <label htmlFor={htmlFor} className="block text-[11px] sm:text-xs font-bold uppercase mb-1.5 leading-snug break-words"
         style={{ color: "#30534A", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.1em" }}>
         {children}
     </label>
@@ -78,8 +78,8 @@ export default function ContactPopup() {
         const attachWhenReady = (attempt = 0) => {
             if (cancelled || attempt > 240) return
 
-            const contactSection = document.getElementById("contact")
-            if (!contactSection) {
+            const projectsSection = document.getElementById("projects")
+            if (!projectsSection) {
                 rafId = requestAnimationFrame(() => attachWhenReady(attempt + 1))
                 return
             }
@@ -101,7 +101,7 @@ export default function ContactPopup() {
                     rootMargin: "0px 0px -10% 0px",
                 }
             )
-            observer.observe(contactSection)
+            observer.observe(projectsSection)
         }
 
         const timer = setTimeout(() => {
@@ -233,12 +233,12 @@ export default function ContactPopup() {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-1.5 sm:p-4"
             style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)" }}
             onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
         >
             <div
-                className="relative w-full max-w-md rounded-2xl p-6 sm:p-8"
+                className="relative w-full max-w-md rounded-2xl p-3 sm:p-8 max-h-[92vh] overflow-y-auto"
                 style={{
                     background: "#fff",
                     boxShadow: "0 24px 64px rgba(48,83,74,0.18)",
@@ -265,7 +265,7 @@ export default function ContactPopup() {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="space-y-4"
+                    className="space-y-4 max-w-full overflow-x-hidden"
                     onPointerDownCapture={markHuman}
                     onKeyDownCapture={markHuman}
                     onFocusCapture={markHuman}
@@ -285,7 +285,7 @@ export default function ContactPopup() {
                         aria-hidden="true"
                     />
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <Label htmlFor="popup-name">Name <span style={{ color: "#e55" }}>*</span></Label>
                             <input

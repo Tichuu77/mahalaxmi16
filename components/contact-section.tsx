@@ -49,7 +49,7 @@ const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | 
 
 // Field label
 const Label = memo(({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) => (
-  <label htmlFor={htmlFor} className="block text-xs font-bold uppercase tracking-wider mb-1.5"
+  <label htmlFor={htmlFor} className="block text-[11px] sm:text-xs font-bold uppercase mb-1.5 leading-snug break-words"
     style={{ color: "#30534A", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.1em" }}>
     {children}
   </label>
@@ -291,7 +291,7 @@ Interested In: ${formState.interestedIn}
   }, [formState, router, honeypot, turnstileToken])
 
   return (
-    <section id={sectionId} className="contact-section relative overflow-hidden">
+    <section id={sectionId} className="contact-section relative overflow-x-clip overflow-y-hidden">
       {/* Right accent stripe */}
       <div className="contact-accent-bar absolute top-0 right-0 bottom-0 w-1" />
 
@@ -346,7 +346,7 @@ Interested In: ${formState.interestedIn}
               style={{ background: "rgba(48,83,74,0.03)", border: "1px solid rgba(48,83,74,0.1)" }}>
               <form
                   onSubmit={handleSubmit}
-                  className="space-y-4"
+                  className="space-y-4 max-w-full overflow-x-hidden"
                   onPointerDownCapture={markHuman}
                   onKeyDownCapture={markHuman}
                   onFocusCapture={markHuman}

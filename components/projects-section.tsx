@@ -21,7 +21,7 @@ const projects = {
     { id: 4,  title: "Mahalaxmi Nagar - 42",  image: "/ongoingProject2.webp",   description: "Well-connected plots near Jamtha, Wardha Road. NMRDA & RL sanctioned with excellent amenities.",                                                                                           location: "MOUZA - JAMTHA",                    status: "ongoing"   },
     { id: 5,  title: "Mahalaxmi Nagar - 43",  image: "/project_43.jpg",         description: "Ready-to-move plots behind Royal Gondwana School, Shankarpur. Fully developed with 90% finance.",                                                                                          location: "MOUZA - SHANKARPUR",                status: "ongoing"   },
     { id: 6,  title: "Mahalaxmi Nagar - 45",  image: "/project_M-45.jpg",       description: "Premium plotted development near Samruddhi Mahamarg, close to AIIMS, IIM, MIHAN & D-Mart.",                                                                                               location: "MOUZA - SUMTHANA",                  status: "ongoing"   },
-    { id: 7,  title: "Mahalaxmi Nagar - 46",  image: "/project_M-46.jpg",       description: "Premium plotted development near Samruddhi Mahamarg, close to AIIMS, IIM, MIHAN & D-Mart.",                                                                                               location: "MOUZA - SUMTHANA",                  status: "ongoing"   },
+    { id: 7,  title: "Mahalaxmi Nagar - 46",  image: "/project_M-46.jpg",       description: "Premium plotted development near Samruddhi Mahamarg, close to AIIMS, IIM, MIHAN & D-Mart.",                                                                                               location: "MOUZA - PANDURNA",                  status: "ongoing"   },
     { id: 8,  title: "Tattva Apas",           image: "/tatava apas.webp",       description: "Tattva Apas offers contemporary living with 100+ meticulously crafted apartments. Featuring landscaped gardens, play areas, and fitness centers, it fosters a vibrant social atmosphere.", location: "MOUZA - BELTARODI",                 status: "ongoing"   },
     { id: 9, title: "Mahalaxmi Nagar - 47",  image: "/project_M-47.jpg",       description: "New launch behind Haldiram & AM Cinema on Koradi Road. NMRDA & RL approved with 90% finance.",                                                                                            location: "KORADI ROAD (Behind Haldiram)",     status: "ongoing"   },
     { id: 10, title: "Mahalaxmi Nagar - 49",  image: "/M-49-2.jpg.jpeg",           description: "", location: "", status: "ongoing" },
@@ -79,8 +79,8 @@ const FeaturedCard = memo(({ project }: { project: Project }) => {
 
   return (
     <div
-      className="rounded-2xl overflow-hidden"
-      style={{ background: "#fff", border: "1px solid rgba(48,83,74,0.13)", boxShadow: "0 4px 24px rgba(48,83,74,0.08)" }}
+      className="rounded-3xl overflow-hidden"
+      style={{ background: "#fff", border: "1px solid rgba(48,83,74,0.12)", boxShadow: "0 14px 44px rgba(48,83,74,0.1)" }}
     >
       <div className="flex flex-col lg:grid lg:grid-cols-[1.5fr_1fr]">
         {/* Image */}
@@ -116,7 +116,7 @@ const FeaturedCard = memo(({ project }: { project: Project }) => {
         </div>
 
         {/* Content */}
-        <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+        <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-[linear-gradient(180deg,#ffffff_0%,#fbfcfb_100%)]">
           <div>
             <div className="hidden lg:block mb-6">
               <div className="flex items-center gap-2 mb-3">
@@ -156,7 +156,7 @@ const FeaturedCard = memo(({ project }: { project: Project }) => {
 
           <button
             onClick={handleWhatsApp}
-            className="group flex items-center justify-center gap-2 font-bold text-sm px-6 py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 w-full"
+            className="group flex items-center justify-center gap-2 font-bold text-sm px-6 py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.01] active:scale-95 w-full"
             style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.03em" }}
           >
             <Phone size={15} />
@@ -195,7 +195,7 @@ const ProjectCard = memo(({ project }: { project: Project }) => {
   return (
     <div
       className="group rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl active:scale-[0.99]"
-      style={{ background: "#fff", border: "1px solid rgba(48,83,74,0.1)", boxShadow: "0 2px 12px rgba(48,83,74,0.06)", willChange: "transform" }}
+      style={{ background: "#fff", border: "1px solid rgba(48,83,74,0.1)", boxShadow: "0 8px 24px rgba(48,83,74,0.08)", willChange: "transform" }}
     >
       <div className="relative overflow-hidden" style={{ height: "200px" }}>
         <img
@@ -218,7 +218,7 @@ const ProjectCard = memo(({ project }: { project: Project }) => {
         </div>
       </div>
 
-      <div className="p-4 sm:p-5 flex flex-col flex-1">
+      <div className="p-4 sm:p-5 flex flex-col flex-1 bg-[linear-gradient(180deg,#ffffff_0%,#fcfdfc_100%)]">
         <h3
           className="font-bold mb-2 leading-snug transition-colors duration-200 group-hover:text-[#30534A]"
           style={{ fontFamily: "'Poppins', sans-serif", fontSize: "0.95rem", color: "#0d0d0d" }}
@@ -238,7 +238,7 @@ const ProjectCard = memo(({ project }: { project: Project }) => {
           style={{
             color: "#666",
             fontFamily: "'Inter', sans-serif",
-            fontSize: "0.8rem",
+            fontSize: "0.82rem",
             display: "-webkit-box",
             WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical",
@@ -317,6 +317,7 @@ export function ProjectsSection() {
       ref={sectionRef}
       id="projects"
       className="projects-section relative overflow-hidden"
+      style={{ background: "linear-gradient(180deg, #ffffff 0%, #f9fbfa 70%, #ffffff 100%)" }}
     >
       {/* Left accent stripe */}
       <div
@@ -332,20 +333,25 @@ export function ProjectsSection() {
 
       {/* Label strip */}
       <div
-        className="flex items-center gap-4 pl-8 pr-6 sm:pl-16 sm:pr-10 lg:px-24 py-5 relative z-10"
+        className="flex items-center gap-4 pl-6 pr-4 sm:pl-12 sm:pr-10 lg:px-24 py-5 relative z-10"
         style={{ borderBottom: "1px solid rgba(48,83,74,0.1)" }}
       >
-        <span className="text-[10px] tracking-[0.35em] uppercase font-bold" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>Portfolio</span>
+        <span
+          className="text-[10px] tracking-[0.3em] uppercase font-bold px-3 py-1 rounded-full"
+          style={{ color: "#a86a1a", background: "rgba(201,134,43,0.12)", border: "1px solid rgba(201,134,43,0.3)", fontFamily: "'Poppins', sans-serif" }}
+        >
+          Portfolio
+        </span>
         <span className="flex-1 h-px" style={{ background: "rgba(48,83,74,0.1)" }} />
         <span className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "rgba(48,83,74,0.35)", fontFamily: "'Inter', sans-serif" }}>70+ Projects</span>
       </div>
 
       {/* Header */}
       <div
-        className={`max-w-[1400px] mx-auto pl-8 pr-6 sm:pl-16 sm:pr-10 lg:px-24 pt-10 pb-8 relative z-10 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        className={`max-w-[1320px] mx-auto pl-6 pr-4 sm:pl-12 sm:pr-10 lg:px-24 pt-12 pb-8 relative z-10 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         style={{ willChange: "transform, opacity" }}
       >
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 p-5 sm:p-7 rounded-2xl" style={{ background: "rgba(255,255,255,0.75)", border: "1px solid rgba(48,83,74,0.1)", boxShadow: "0 8px 26px rgba(48,83,74,0.06)" }}>
           <div>
             <h2
               className="font-bold text-[#0d0d0d] leading-tight"
@@ -372,9 +378,10 @@ export function ProjectsSection() {
                 className="shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all duration-250 active:scale-95"
                 style={{
                   fontFamily: "'Poppins', sans-serif",
-                  background: activeTab === t.value ? "#30534A" : "rgba(48,83,74,0.07)",
+                  background: activeTab === t.value ? "linear-gradient(135deg, #30534A, #3d6b60)" : "rgba(48,83,74,0.07)",
                   color: activeTab === t.value ? "#fff" : "#30534A",
                   border: activeTab === t.value ? "1px solid #30534A" : "1px solid rgba(48,83,74,0.15)",
+                  boxShadow: activeTab === t.value ? "0 8px 20px rgba(48,83,74,0.2)" : "none",
                   letterSpacing: "0.05em",
                   whiteSpace: "nowrap",
                 }}
@@ -388,7 +395,7 @@ export function ProjectsSection() {
 
       {/* Cards */}
       <div
-        className={`max-w-[1400px] mx-auto pl-8 pr-6 sm:pl-16 sm:pr-10 lg:px-24 pb-8 relative z-10 transition-all duration-700 delay-100 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        className={`max-w-[1320px] mx-auto pl-6 pr-4 sm:pl-12 sm:pr-10 lg:px-24 pb-10 relative z-10 transition-all duration-700 delay-100 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         style={{ willChange: "transform, opacity" }}
       >
         {filtered.length === 0 ? (
@@ -397,10 +404,10 @@ export function ProjectsSection() {
             <p className="text-base" style={{ color: "#aaa", fontFamily: "'Inter', sans-serif" }}>No projects in this category yet.</p>
           </div>
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-6">
             {featured && <FeaturedCard project={featured} />}
             {rest.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {rest.map((project, i) => (
                   <div
                     key={project.id}
