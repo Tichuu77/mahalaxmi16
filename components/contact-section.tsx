@@ -10,20 +10,21 @@ import {
   recordSubmittedPhone,
   validateFillDuration,
 } from "@/lib/form-protection"
+import { submitEnquiry } from "@/lib/submit-enquiry"
 import { ContactTurnstile, turnstileSiteKeyConfigured } from "@/components/contact-turnstile"
 
 // Static data at module level
 const contacts = [
-  { icon: Phone,  label: "Phone",   value: "+91 8999537942",                                                                                                                           sub: "Available Mon–Fri, 9am–6pm", href: "tel:+918999537942"              },
+  { icon: Phone,  label: "Phone",   value: "+91 8999537942",                                                                                                                           sub: "Mon–Sat, 9am–7pm · Anil Kakde", href: "tel:+918999537942"              },
   { icon: Mail,   label: "Email",   value: "anil.kakde2016@gmail.com",                                                                                                                 sub: "We'll respond within 24 hours", href: "mailto:anil.kakde2016@gmail.com" },
   { icon: MapPin, label: "Address", value: "Flat No. 103, 104, Laxmivihar Apartment, Beside Hotel Airport Centre Point, Wardha Road, Somalwada, Nagpur – 440025", sub: null,                              href: null                        },
 ]
 
 const badges = [
-  "Quick Response",
   "Free Consultation",
+  "No Spam",
   "RERA Approved",
-  "Transparent Process",
+  "Quick Response",
 ]
 
 // Shared input style object — created once at module level
@@ -141,6 +142,7 @@ type SubmitStatus =
   | "captcha"
   | "phone"
   | "duplicatePhone"
+  | "apiFailed"
 
 /* ── Section ── */
 export default function ContactSection({ sectionId = "contact" }: ContactSectionProps) {
@@ -149,6 +151,7 @@ export default function ContactSection({ sectionId = "contact" }: ContactSection
   const [formState, setFormState] = useState<FormState>(EMPTY_FORM)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle")
+  const [apiErrorMessage, setApiErrorMessage] = useState("")
   const [honeypot, setHoneypot] = useState("")
   const [turnstileToken, setTurnstileToken] = useState("")
   const formStartedAtRef = useRef<number | null>(null)
@@ -164,6 +167,7 @@ export default function ContactSection({ sectionId = "contact" }: ContactSection
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     markFormStarted()
+    humanRef.current = true
     const { name, value } = e.target
     setFormState(prev => ({ ...prev, [name]: value }))
   }, [markFormStarted])
@@ -176,6 +180,10 @@ export default function ContactSection({ sectionId = "contact" }: ContactSection
 
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    humanRef.current = true
+    if (formStartedAtRef.current === null) {
+      formStartedAtRef.current = Date.now()
+    }
 
     const alreadySubmitted = typeof window !== "undefined" && localStorage.getItem("formSubmitted") === "true"
     const submittedAt = typeof window !== "undefined" ? parseInt(localStorage.getItem("formSubmittedAt") || "0", 10) : 0
@@ -187,12 +195,6 @@ export default function ContactSection({ sectionId = "contact" }: ContactSection
 
     if (honeypot.trim() !== "") {
       setSubmitStatus("spam")
-      setTimeout(() => setSubmitStatus("idle"), 4000)
-      return
-    }
-
-    if (!humanRef.current) {
-      setSubmitStatus("interaction")
       setTimeout(() => setSubmitStatus("idle"), 4000)
       return
     }
@@ -228,66 +230,38 @@ export default function ContactSection({ sectionId = "contact" }: ContactSection
       return
     }
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("formSubmitted", "true")
-      localStorage.setItem("formSubmittedAt", String(Date.now()))
-    }
-
     setIsSubmitting(true)
     setSubmitStatus("idle")
 
-    const payload: Record<string, string> = {
-      access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
-      name: formState.name,
-      subject: `New Inquiry – ${formState.lookingFor}`,
-      message: `
-Name: ${formState.name}
-Mobile: ${phone10}
-Looking For: ${formState.lookingFor}
-Interested In: ${formState.interestedIn}
-      `.trim(),
-    }
-    if (turnstileToken) {
-      payload["cf-turnstile-response"] = turnstileToken
+    const result = await submitEnquiry({
+      name: formState.name.trim(),
+      phone: phone10,
+      lookingFor: formState.lookingFor,
+      interestedIn: formState.interestedIn,
+      honeypot,
+      turnstileToken,
+    })
+
+    if (result.ok) {
+      recordSubmittedPhone(phone10)
+      if (typeof window !== "undefined") {
+        localStorage.setItem("formSubmitted", "true")
+        localStorage.setItem("formSubmittedAt", String(Date.now()))
+        sessionStorage.setItem("hideContactPopupOnce", "true")
+      }
+      setFormState(EMPTY_FORM)
+      formStartedAtRef.current = null
+      humanRef.current = false
+      setTurnstileToken("")
+      setHoneypot("")
+      router.push("/thank-you")
+    } else {
+      setSubmitStatus(result.code === "validation" || result.code === "phone" ? "error" : "apiFailed")
+      setApiErrorMessage(result.error)
+      setTimeout(() => setSubmitStatus("idle"), 6000)
     }
 
-    try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload),
-      })
-      const data = await res.json()
-      if (data.success) {
-        recordSubmittedPhone(phone10)
-        setFormState(EMPTY_FORM)
-        formStartedAtRef.current = null
-        humanRef.current = false
-        setTurnstileToken("")
-        setHoneypot("")
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("hideContactPopupOnce", "true")
-        }
-        router.push("/thank-you")
-      } else {
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("formSubmitted")
-          localStorage.removeItem("formSubmittedAt")
-        }
-        setSubmitStatus("error")
-        setTimeout(() => setSubmitStatus("idle"), 3000)
-      }
-    } catch (err) {
-      console.error(err)
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("formSubmitted")
-        localStorage.removeItem("formSubmittedAt")
-      }
-      setSubmitStatus("error")
-      setTimeout(() => setSubmitStatus("idle"), 3000)
-    } finally {
-      setIsSubmitting(false)
-    }
+    setIsSubmitting(false)
   }, [formState, router, honeypot, turnstileToken])
 
   return (
@@ -322,7 +296,7 @@ Interested In: ${formState.interestedIn}
             <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Today</span>
           </h2>
           <p className="text-sm leading-relaxed max-w-md" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
-            Have a question or ready to invest? We'd love to hear from you — reach out and we'll get back to you fast.
+            Book your free site visit today. Our Mahalaxmi Infra team will call you back within 2 hours on working days.
           </p>
         </div>
 
@@ -425,27 +399,43 @@ Interested In: ${formState.interestedIn}
                       onBlur={inputBlur}
                     >
                       <option value="" disabled>Select property type</option>
-                      <option value="Residential Plots">Residential Plots</option>
-                      <option value="Commercial Plots">Commercial Plots</option>
-                      <option value="Residential & Commercial Plots">Residential &amp; Commercial Plots</option>
+                      <option value="Residential Plot">Residential Plot</option>
+                      <option value="Commercial Plot">Commercial Plot</option>
+                      <option value="Flat / Apartment">Flat / Apartment</option>
+                      <option value="Residential & Commercial">Residential &amp; Commercial</option>
                     </select>
                   </div>
 
                   {/* Interested In */}
                   <div>
-                    <Label htmlFor={fieldId("interestedIn")}>Interested In (Project with Area) <span style={{ color: "#e55" }}>*</span></Label>
-                    <input
-                      type="text"
+                    <Label htmlFor={fieldId("interestedIn")}>Preferred Location <span style={{ color: "#e55" }}>*</span></Label>
+                    <select
                       id={fieldId("interestedIn")}
                       name="interestedIn"
                       value={formState.interestedIn}
                       onChange={handleChange}
                       required
-                      placeholder="e.g. Green Valley – 1200 sq.ft"
-                      style={inputStyle}
+                      style={{
+                        ...inputStyle,
+                        appearance: "none",
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "right 1rem center",
+                        paddingRight: "2.5rem",
+                        color: formState.interestedIn ? "#0d0d0d" : "#aaa",
+                        cursor: "pointer",
+                      }}
                       onFocus={(e) => { markFormStarted(); inputFocus(e) }}
                       onBlur={inputBlur}
-                    />
+                    >
+                      <option value="" disabled>Choose area</option>
+                      <option value="Besa / Beltarodi">Besa / Beltarodi</option>
+                      <option value="Wardha Road / MIHAN">Wardha Road / MIHAN</option>
+                      <option value="Samruddhi Circle">Samruddhi Circle</option>
+                      <option value="Katol Road / Koradi">Katol Road / Koradi</option>
+                      <option value="Manish Nagar">Manish Nagar</option>
+                      <option value="Any Location">Any Location</option>
+                    </select>
                   </div>
 
                   <ContactTurnstile onSuccess={setTurnstileToken} onExpire={() => setTurnstileToken("")} />
@@ -509,6 +499,13 @@ Interested In: ${formState.interestedIn}
                     </div>
                   )}
 
+                  {submitStatus === "apiFailed" && (
+                    <div className="flex items-start gap-2 rounded-xl p-3.5 text-sm"
+                      style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
+                      {apiErrorMessage || "Could not send your enquiry. Please call +91 8999537942."}
+                    </div>
+                  )}
+
                   {/* Submit */}
                   <button
                     type="submit"
@@ -519,7 +516,7 @@ Interested In: ${formState.interestedIn}
                     {isSubmitting ? (
                       <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Sending…</>
                     ) : (
-                      <>Send Message<Send size={15} /></>
+                      <>Send Enquiry<Send size={15} /></>
                     )}
                   </button>
                 </form>

@@ -7,7 +7,7 @@ import Link from "next/link"
 // Static data at module level
 const navLinks = [
   { href: "#about",        label: "About"        },
-  { href: "#amenities",    label: "Amenities"    },
+  { href: "#amenities",    label: "Locations"    },
   { href: "#projects",     label: "Projects"     },
   { href: "#gallery",      label: "Gallery"      },
   { href: "#user-guide",   label: "User Guide"   },
@@ -70,7 +70,7 @@ export function Navigation() {
             href="#contact"
             className="hidden md:block px-10 py-4 bg-primary hover:bg-primary/80 text-white rounded transition-colors font-medium text-sm"
           >
-            Get Started
+            Book Site Visit
           </Link>
 
           {/* Mobile toggle */}
@@ -97,7 +97,7 @@ export function Navigation() {
               className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-poppins font-medium text-center hover-lift transition-all duration-300 ease-out"
               onClick={closeMenu}
             >
-              Get Started
+              Book Site Visit
             </Link>
           </div>
         )}

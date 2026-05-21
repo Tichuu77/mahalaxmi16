@@ -5,15 +5,17 @@ import { ArrowRight, MapPin, Award, TrendingUp } from "lucide-react"
 
 // Static data at module level — never re-created
 const DESKTOP_STATS = [
-  { value: "70+",     label: "Completed Projects" },
-  { value: "17,000+", label: "Happy Clients"      },
-  { value: "100%",    label: "RERA Approved"       },
+  { value: "70+",  label: "Projects Delivered" },
+  { value: "17K+", label: "Happy Clients"      },
+  { value: "₹22L", label: "Starting Price"     },
+  { value: "90%",  label: "Bank Finance"       },
 ]
 
 const MOBILE_STATS = [
-  { value: "70+",  label: "Projects"      },
-  { value: "17K+", label: "Happy Clients" },
-  { value: "100%", label: "RERA Approved" },
+  { value: "70+",  label: "Projects"       },
+  { value: "17K+", label: "Happy Clients"  },
+  { value: "₹22L", label: "From"           },
+  { value: "90%",  label: "Bank Finance"   },
 ]
 
 export function HeroSection() {
@@ -91,7 +93,7 @@ export function HeroSection() {
             <div className="flex items-center gap-3 mb-6 sm:mb-8">
               <span className="hero-accent-line" />
               <span className="hero-label text-[10px] sm:text-[11px] tracking-[0.3em] uppercase font-semibold">
-                NMRDA Sanctioned · RERA Approved
+                NMRDA Sanctioned · RERA Approved · 13+ Years
               </span>
             </div>
           </div>
@@ -99,23 +101,14 @@ export function HeroSection() {
           {/* Headline */}
           <div className={`transition-all duration-600 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <h1 className="hero-title font-bold leading-[1.05] mb-5 sm:mb-6 text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.4)", fontSize: "clamp(2.2rem, 4.5vw, 4.2rem)" }}>
-              Build Your
-              <br />
-              <span className="text-white">Dream Home</span>
-              <br />
-              With{" "}
-              <span className="relative inline-block text-white">
-                Mahalaxmi Infra
-                <span className="hero-title-underline absolute left-0 bottom-0 w-full" />
-              </span>{" "}
+              Mahalaxmi Infra —<br />Nagpur's Most<br />Trusted Developer
             </h1>
           </div>
 
           {/* Sub-heading */}
           <div className={`transition-all duration-600 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <p className="hero-description mb-6 sm:mb-8 leading-relaxed max-w-lg">
-              Residential &amp; Commercial Plots in the Heart of Nagpur —
-              crafted for those who invest in more than just land.
+              Mahalaxmi Developers Nagpur — 70+ NMRDA approved residential plot projects, 17,000+ happy families, and over 13 years of transparent real estate excellence. Besa · Wardha Road · MIHAN · Samruddhi Circle.
             </p>
           </div>
 
@@ -137,7 +130,7 @@ export function HeroSection() {
               onClick={scrollToContact}
               className="hero-cta-primary group flex items-center gap-2"
             >
-              Contact Us Now
+              Book Free Site Visit
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
             <button
@@ -146,7 +139,7 @@ export function HeroSection() {
               onMouseLeave={handleExploreLeave}
               className="hero-cta-secondary font-bold text-sm px-6 sm:px-7 py-3.5 sm:py-4 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95"
             >
-              Explore Projects
+              View Projects
             </button>
           </div>
 
@@ -202,9 +195,9 @@ export function HeroSection() {
 
               {DESKTOP_STATS.map((stat, i) => (
                 <div
-                  key={stat.value}
+                  key={stat.label}
                   className="flex items-center gap-4 px-6 py-5"
-                  style={{ borderBottom: i < 2 ? "1px solid rgba(201,134,43,0.08)" : "none" }}
+                  style={{ borderBottom: i < DESKTOP_STATS.length - 1 ? "1px solid rgba(201,134,43,0.08)" : "none" }}
                 >
                   <span
                     className="font-bold"
@@ -229,12 +222,12 @@ export function HeroSection() {
 
         {/* Mobile stats */}
         <div
-          className={`lg:hidden grid grid-cols-3 gap-2 sm:gap-3 -mt-2 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+          className={`lg:hidden grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 -mt-2 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
           style={{ transitionDelay: "460ms", willChange: "transform, opacity" }}
         >
           {MOBILE_STATS.map((stat) => (
             <div
-              key={stat.value}
+              key={stat.label}
               className="rounded-xl p-3 sm:p-4 text-center"
               style={{
                 background: "rgba(255,255,255,0.85)",

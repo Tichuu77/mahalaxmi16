@@ -68,12 +68,12 @@ export function AboutSection() {
   }, [animateCounters])
 
   const features = useMemo(() => [
-    { icon: Award,        text: "Premium Materials"    },
-    { icon: Users,        text: "Expert Craftsmanship" },
-    { icon: Shield,       text: "Quality Assurance"    },
-    { icon: CheckCircle2, text: "Timely Delivery"      },
-    { icon: TrendingUp,   text: "Value Appreciation"   },
-    { icon: Building2,    text: "Modern Architecture"  },
+    { icon: Shield,       text: "RERA Registered"           },
+    { icon: CheckCircle2, text: "NMRDA Sanctioned"          },
+    { icon: Users,        text: "Free Site Visit Support"   },
+    { icon: TrendingUp,   text: "Transparent Pricing"       },
+    { icon: Award,        text: "Up to 90% Bank Finance"    },
+    { icon: Building2,    text: "9+ Prime Locations"        },
   ], [])
 
   const stats = useMemo(() => [
@@ -84,9 +84,9 @@ export function AboutSection() {
   ], [counters])
 
   const trust = useMemo(() => [
-    { icon: Shield,       label: "NMRDA Sanctioned" },
-    { icon: CheckCircle2, label: "RERA Approved"    },
-    { icon: Award,        label: "ISO Certified"    },
+    { icon: Award,        label: "Established 2011" },
+    { icon: CheckCircle2, label: "MAHA RERA A50500044714" },
+    { icon: Shield,       label: "NMRDA Sanctioned Layouts" },
   ], [])
 
   return (
@@ -121,7 +121,7 @@ export function AboutSection() {
         <span
           className="about-header-label"
         >
-          Who We Are
+          13+ Years of Excellence
         </span>
         <span className="about-header-divider flex-1" />
       </div>
@@ -138,10 +138,10 @@ export function AboutSection() {
             <h2
               className="about-title"
             >
-              Where Luxury
+              Nagpur&apos;s Leading
               <br />
-              <span className="about-title-highlight">Meets</span>{" "}
-              <span className="about-title-outline">Craft</span>
+              <span className="about-title-highlight">Real Estate</span>{" "}
+              <span className="about-title-outline">Developer</span>
             </h2>
 
             <div className="about-image-container group">
@@ -195,14 +195,12 @@ export function AboutSection() {
             style={{ transitionDelay: "150ms", willChange: "transform, opacity" }}
           >
             <p className="about-description">
-              With over a decade of excellence in real estate development,{" "}
-              <span className="about-description-highlight">Mahalaxmi Infra</span> is committed to creating
-              architectural landmarks that blend luxury, sustainability, and innovation in the heart of Nagpur.
+              <span className="about-description-highlight">Mahalaxmi Infra</span> — also known as Mahalaxmi Developers and Mahalaxmi Developer Pvt Ltd — has been building trust across Nagpur since 2011. We deliver NMRDA &amp; RERA approved residential plots that are legally clear, bank-finance eligible, and perfectly located.
             </p>
             <p className="about-description">
-              We build not just structures, but{" "}
-              <span className="about-description-gold">thriving communities</span>{" "}
-              where families create lasting memories.
+              All projects are{" "}
+              <span className="about-description-gold">RERA registered (MAHA RERA No. A50500044714)</span>{" "}
+              and NMRDA sanctioned, with transparent pricing and dedicated site visit support Mon–Sat, 9am–7pm.
             </p>
 
             {/* Features */}

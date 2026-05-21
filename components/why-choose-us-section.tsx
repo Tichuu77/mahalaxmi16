@@ -5,24 +5,24 @@ import { useEffect, useRef, useState, useCallback, memo } from "react"
 
 // Static data at module level
 const reasons = [
-  { icon: Trophy,    title: "Proven Excellence", description: "Award-winning projects trusted by thousands of families across Nagpur.",          stat: "70+",  statLabel: "Projects"     },
-  { icon: Zap,       title: "Innovation First",  description: "Modern layouts, smart planning, and forward-thinking infrastructure.",            stat: "13+",  statLabel: "Years"        },
-  { icon: Users,     title: "Expert Team",       description: "Dedicated professionals with decades of real estate experience.",                 stat: "17K+", statLabel: "Clients"      },
-  { icon: Heart,     title: "Customer Focused",  description: "Your satisfaction drives every decision we make, from plot to possession.",       stat: "100%", statLabel: "RERA Approved"},
-  { icon: Lightbulb, title: "Prime Locations",   description: "Strategically chosen land near major highways, hospitals, and schools.",          stat: "9+",   statLabel: "Locations"    },
-  { icon: Check,     title: "Quality Assured",   description: "NMRDA sanctioned, legally clear, and bank finance eligible plots.",              stat: "90%",  statLabel: "Finance"      },
+  { icon: Check,     title: "NMRDA & RERA Approved",  description: "Every plot is legally approved, NMRDA sanctioned, and RERA registered — protecting your investment.",                    stat: "100%", statLabel: "Legal Clear"  },
+  { icon: Zap,       title: "Up to 90% Bank Finance", description: "Eligible for loans from SBI, HDFC, ICICI, Bank of Baroda, Axis, and all major banks.",                                  stat: "90%",  statLabel: "Finance"      },
+  { icon: Lightbulb, title: "Prime Nagpur Locations", description: "Plots near MIHAN, AIIMS, IIM, Samruddhi Mahamarg, Wardha Road, Besa — Nagpur's fastest-growing zones.",                 stat: "9+",   statLabel: "Locations"    },
+  { icon: Trophy,    title: "Clear Title & Possession", description: "Fully developed, ready-to-register plots with clear titles and zero legal complications.",                            stat: "70+",  statLabel: "Projects"     },
+  { icon: Heart,     title: "Transparent Pricing",    description: "Price list starting from ₹22 Lakh. No hidden costs — what you see is what you pay.",                                    stat: "₹22L", statLabel: "Starting"     },
+  { icon: Users,     title: "13 Years of Trust",      description: "Mahalaxmi Developer Pvt Ltd — proven track record since 2011 with 17,000+ satisfied families.",                         stat: "17K+", statLabel: "Families"     },
 ]
 
 const trackRecord = [
-  "13+ years industry experience",
-  "17,000+ satisfied families",
-  "Industry-leading satisfaction rate",
+  "70+ completed projects across Nagpur",
+  "17,000+ satisfied families since 2011",
+  "MAHA RERA No. A50500044714",
 ]
 
 const support = [
-  "24/7 customer support",
-  "Dedicated site visit assistance",
-  "Transparent documentation process",
+  "Free site visit — response within 2 hours",
+  "Dedicated team Mon–Sat, 9am–7pm",
+  "End-to-end documentation & loan assistance",
 ]
 
 // Precomputed bar widths — avoids inline arithmetic per render
@@ -168,9 +168,9 @@ export function WhyChooseUsSection() {
 
       {/* Label strip */}
       <div className="why-choose-us-header flex items-center gap-4 pl-8 pr-6 sm:pl-16 sm:pr-10 lg:px-24 py-5 relative z-10">
-        <span className="why-choose-us-label">Why Choose Us</span>
+        <span className="why-choose-us-label">Why Mahalaxmi Infra</span>
         <span className="why-choose-us-divider flex-1" />
-        <span className="why-choose-us-sublabel">The Difference We Make</span>
+        <span className="why-choose-us-sublabel">17,000+ Families Trust Us</span>
       </div>
 
       <div className="max-w-[1400px] mx-auto pl-8 pr-6 sm:pl-16 sm:pr-10 lg:px-24 pt-12 pb-20 relative z-10">
@@ -179,13 +179,13 @@ export function WhyChooseUsSection() {
         <div className={`grid lg:grid-cols-[1fr_1px_1fr] gap-8 lg:gap-0 mb-14 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <div className="lg:pr-14">
             <h2 className="why-choose-us-title font-bold leading-tight mb-4">
-              Why Thousands
+              Why 17,000+ Families
               <br />
-              <span className="why-choose-us-title-dark">Trust</span>{" "}
+              <span className="why-choose-us-title-dark">Chose</span>{" "}
               <span className="why-choose-us-title-outline">Mahalaxmi</span>
             </h2>
             <p className="why-choose-us-description max-w-md">
-              For over a decade, we've been building more than plots — we build confidence, community, and lasting value for families across Nagpur.
+              From site visit to possession — every step is handled with transparency and care by Mahalaxmi Developers Nagpur.
             </p>
           </div>
 

@@ -7,54 +7,54 @@ import { useState, useEffect, useRef, useCallback, memo } from "react"
 const guides = [
   {
     number: "01",
-    title: "Explore Properties",
-    description: "Browse our extensive collection of premium residential and commercial properties in Nagpur.",
+    title: "Call or Enquire Online",
+    description: "Contact Mahalaxmi Infra on +91 8999537942 or submit the enquiry form. Our team responds within 2 hours.",
     icon: Home,
     details: [
-      "Filter properties by location, price, and amenities",
-      "Save your favourite properties to a wishlist",
-      "Compare multiple plots side by side",
+      "Share your budget and preferred location",
+      "Get guidance on the right Mahalaxmi Infra project",
+      "Free consultation with no obligation",
     ],
   },
   {
     number: "02",
-    title: "Schedule Site Visit",
-    description: "Book a personalised site visit with our expert consultants to experience the property firsthand.",
+    title: "Book Your Free Site Visit",
+    description: "Visit any Mahalaxmi Infra Nagpur project with our dedicated site visit team.",
     icon: Calendar,
     details: [
-      "Select your preferred date and time",
-      "Our team confirms your visit within 24 hours",
-      "Receive directions and consultant contact details",
+      "See the actual plot, layout, and surroundings",
+      "Visit confirmed within 24 hours",
+      "Pick-up arranged on request",
     ],
   },
   {
     number: "03",
-    title: "Consultation & Financing",
-    description: "Get expert advice on financing options and investment benefits from our experienced team.",
+    title: "Choose Plot & Finalise Booking",
+    description: "Select your preferred plot and review the price list, payment plans, and bank finance options.",
     icon: Briefcase,
     details: [
-      "Discuss investment strategies with our experts",
-      "Explore financing and payment plan options",
-      "Get personalised financial guidance",
+      "Transparent pricing — no hidden costs",
+      "Up to 90% bank loan assistance",
+      "Clear documentation from day one",
     ],
   },
   {
     number: "04",
-    title: "Complete Purchase",
-    description: "Finalise your investment with our transparent, hassle-free documentation process.",
+    title: "Registration & Possession",
+    description: "Complete documentation, register your plot, and receive possession with full legal support.",
     icon: CheckCircle,
     details: [
-      "Sign all required legal documents",
-      "Complete payment processing securely",
-      "Receive your property documentation",
+      "End-to-end support through every legal step",
+      "RERA & NMRDA approved clear titles",
+      "Possession with Mahalaxmi Developer Pvt Ltd",
     ],
   },
 ]
 
 const tips = [
-  { emoji: "💡", label: "Pro Tip",       text: "Visit plots at different times of day — morning light and evening atmosphere matter." },
-  { emoji: "🎯", label: "Best Practice", text: "Review all legal documents carefully and ask our experts for any clarifications." },
-  { emoji: "📞", label: "Support",       text: "Our team is reachable anytime — we're with you at every step of the journey." },
+  { emoji: "📞", label: "Quick Response", text: "Call +91 8999537942 — our team responds within 2 hours on working days." },
+  { emoji: "🏦", label: "Bank Finance",   text: "Up to 90% loan from SBI, HDFC, ICICI, and all major banks — we assist with paperwork." },
+  { emoji: "✅", label: "RERA Approved",  text: "Every project is MAHA RERA registered (No. A50500044714) and NMRDA sanctioned." },
 ]
 
 // Detail list — shared between accordion + right panel
@@ -252,9 +252,9 @@ export function UserGuideSection() {
       {/* Label strip */}
       <div className="flex items-center gap-4 pl-8 pr-8 sm:pl-16 sm:pr-12 lg:px-24 py-5 relative z-10"
         style={{ borderBottom: "1px solid rgba(48,83,74,0.1)" }}>
-        <span className="text-[10px] tracking-[0.35em] uppercase font-bold" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>How It Works</span>
+        <span className="text-[10px] tracking-[0.35em] uppercase font-bold" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>Easy Process</span>
         <span className="flex-1 h-px" style={{ background: "rgba(48,83,74,0.1)" }} />
-        <span className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "rgba(48,83,74,0.35)", fontFamily: "'Inter', sans-serif" }}>4 Simple Steps</span>
+        <span className="text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: "rgba(48,83,74,0.35)", fontFamily: "'Inter', sans-serif" }}>Book in 4 Steps</span>
       </div>
 
       <div className="max-w-[1400px] mx-auto pl-8 pr-8 sm:pl-16 sm:pr-12 lg:px-24 pt-12 pb-20 relative z-10">
@@ -264,12 +264,12 @@ export function UserGuideSection() {
           style={{ willChange: "transform, opacity" }}>
           <h2 className="font-bold leading-tight mb-3 text-[#0d0d0d]"
             style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(1.75rem, 4vw, 3.2rem)" }}>
-            How to{" "}
-            <span style={{ color: "#30534A" }}>Get</span>{" "}
-            <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Started</span>
+            How to Book a{" "}
+            <span style={{ color: "#30534A" }}>Mahalaxmi</span>{" "}
+            <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Infra Plot</span>
           </h2>
           <p className="text-sm leading-relaxed max-w-lg" style={{ color: "#777", fontFamily: "'Inter', sans-serif" }}>
-            Follow our simple step-by-step guide to find, visit, finance, and own your dream plot in Nagpur.
+            From first call to possession — Mahalaxmi Developers makes the entire journey simple and transparent.
           </p>
         </div>
 

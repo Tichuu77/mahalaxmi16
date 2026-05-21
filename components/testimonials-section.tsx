@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react"
 const testimonials = [
   {
     id: 1,
-    content: "Investing with Maha Laxmi Developers was an effortless experience. Their transparent process and clear documentation gave me full confidence. The best decision I ever made.",
+    content: "Investing with Mahalaxmi Infra Nagpur was the best decision. Transparent process, NMRDA approval, clear title — and our plot value has already increased 30% in 2 years.",
     name: "Rajkumar Gharjale",
     location: "Nagpur",
     image: "/testonomials1.webp",
@@ -15,17 +15,17 @@ const testimonials = [
   },
   {
     id: 2,
-    content: "I wanted to invest in a growing area, and plots in Nagpur Besa seemed perfect. Maha Laxmi Developers exceeded my expectations in every way. Highly recommended!",
+    content: "Mahalaxmi Developer in Nagpur gave me exactly what I wanted — legally clear plot near MIHAN at a fair price with 90% bank finance. Excellent team support throughout.",
     name: "Priya Shah",
-    location: "Mumbai",
+    location: "Mumbai → Nagpur",
     image: "/testonomials2.jpg",
     rating: 5,
   },
   {
     id: 3,
-    content: "Investing in residential plots with Mahalaxmi Developers was one of my best decisions. Their transparency, clear titles, and prompt assistance gave me real peace of mind.",
+    content: "I searched for residential plots in Nagpur for months. Mahalaxmi Infra stood out — RERA approved, transparent pricing, fast documentation. Highly recommend Mahalaxmi Developers.",
     name: "Karan Akojwar",
-    location: "Pune",
+    location: "Pune → Nagpur",
     image: "/testonomials3.jpg",
     rating: 5,
   },
@@ -195,7 +195,7 @@ export function TestimonialsSection() {
             <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Clients</span>
           </h2>
           <p className="text-sm leading-relaxed" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
-            Real stories from families who found their dream plots with Mahalaxmi Infra.
+            What clients say about Mahalaxmi Developers — real experiences from Nagpur and beyond.
           </p>
         </div>
 

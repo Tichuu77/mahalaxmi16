@@ -18,8 +18,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Mahalaxmi Infra | NMRDA & RL Residential Plots in Nagpur",
-  description: "Discover premium NMRDA & RL approved residential plots by Mahalaxmi Infra. Invest in secure land projects with excellent connectivity and future growth.",
+  title: "Mahalaxmi Infra Nagpur | NMRDA Approved Residential Plots",
+  description: "Mahalaxmi Developers Nagpur — 70+ NMRDA & RERA approved residential plots from ₹22 Lakh. 17,000+ happy families, 13+ years of trust. Besa, MIHAN, Samruddhi Circle.",
   generator: "v0.app",
   icons: "/Mahalaxmi Infra new Logo.png",
   metadataBase: new URL('https://ak.mahalaxmiinfra.in'),
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
     canonical: 'https://ak.mahalaxmiinfra.in'
   },
   openGraph: {
-    title: "Mahalaxmi Infra | NMRDA & RL Residential Plots",
-    description: "Premium residential plotted development with NMRDA & RL approval. Secure your future investment with Mahalaxmi Infra.",
+    title: "Mahalaxmi Infra Nagpur | NMRDA Approved Residential Plots",
+    description: "NMRDA & RERA approved residential plots by Mahalaxmi Developer Pvt Ltd. Up to 90% bank finance. Free site visit — call +91 8999537942.",
     url: "https://ak.mahalaxmiinfra.in",
     siteName: "Mahalaxmi Infra",
     type: "website",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Mahalaxmi Infra | Residential Plots",
-    description: "Premium plotted development with NMRDA & RL approval. Invest with Mahalaxmi Infra.",
+    description: "NMRDA & RERA approved plots in Nagpur from ₹22 Lakh. Mahalaxmi Infra — 70+ projects, 17,000+ families.",
     images: ["https://ak.mahalaxmiinfra.in/preview.jpg"]
   },
   robots: {
@@ -179,7 +179,7 @@ export default function RootLayout({
           "name": "Mahalaxmi Infra",
           "url": "https://ak.mahalaxmiinfra.in",
           "logo": "https://ak.mahalaxmiinfra.in/Malaxmi-Final-Logo.-2png.png",
-          "description": "Premium residential plotted development with NMRDA & RL approval in Nagpur",
+          "description": "Mahalaxmi Developers Nagpur — NMRDA & RERA approved residential plots from ₹22 Lakh with up to 90% bank finance",
           "sameAs": [
             "https://www.facebook.com/share/18PdfPMute/",
             "https://www.instagram.com/mahalaxmiinfra_ak"
@@ -205,7 +205,7 @@ export default function RootLayout({
           "alternateName": "Mahalaxmi Infrastructure",
           "url": "https://ak.mahalaxmiinfra.in",
           "logo": "https://ak.mahalaxmiinfra.in/Malaxmi-Final-Logo.-2png.png",
-          "description": "Premium NMRDA & RL approved residential plots in Nagpur",
+          "description": "Mahalaxmi Developer Pvt Ltd — NMRDA & RERA approved residential plots in Nagpur since 2011",
           "sameAs": [
             "https://www.facebook.com/share/18PdfPMute/",
             "https://www.instagram.com/mahalaxmiinfra_ak"
@@ -220,7 +220,7 @@ export default function RootLayout({
             "contactOption": "TollFree"
           },
           "founder": "Anil Kakde",
-          "foundingDate": "2016"
+          "foundingDate": "2011"
         }) }} />
 
         {/* Website Schema */}

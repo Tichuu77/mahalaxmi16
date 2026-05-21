@@ -1,31 +1,31 @@
 "use client"
 
-import { Wifi, Dumbbell, Trees, Zap, Shield, Users } from "lucide-react"
+import { Trees, Zap, Shield, Users } from "lucide-react"
 import { useState, useRef, useEffect, useMemo, useCallback, memo } from "react"
 
 const amenities = [
-  { icon: Wifi,      title: "Smart Home",        description: "Advanced IoT integration for modern living.",     category: "facilities"    },
-  { icon: Dumbbell,  title: "Fitness Center",    description: "State-of-the-art gym facilities.",                category: "wellness"      },
-  { icon: Trees,     title: "Green Spaces",      description: "Lush landscaping and parks.",                    category: "wellness"      },
-  { icon: Zap,       title: "Power Backup",      description: "Uninterrupted power supply 24/7.",               category: "facilities"    },
-  { icon: Shield,    title: "Security",          description: "CCTV surveillance and on-site personnel.",       category: "facilities"    },
-  { icon: Users,     title: "Community Hub",     description: "Spaces for social gatherings.",                  category: "entertainment" },
-  { emoji: "🏊",     title: "Swimming Pool",     description: "Olympic-sized pool with children's area.",       category: "wellness"      },
-  { emoji: "🎮",     title: "Gaming Zone",       description: "Indoor games and entertainment facilities.",     category: "entertainment" },
-  { emoji: "🧘",     title: "Yoga & Meditation", description: "Dedicated spaces for wellness activities.",      category: "wellness"      },
-  { emoji: "🚗",     title: "Covered Parking",   description: "Secure multi-level parking facilities.",         category: "facilities"    },
-  { emoji: "🎪",     title: "Banquet Hall",      description: "Event spaces for celebrations.",                 category: "entertainment" },
-  { emoji: "👶",     title: "Kids Play Area",    description: "Safe and fun playground for children.",          category: "entertainment" },
+  { icon: Shield,    title: "NMRDA Sanctioned",     description: "All layouts legally approved by NMRDA/NIT.",              category: "legal"       },
+  { icon: Zap,       title: "90% Bank Finance",     description: "Eligible for loans from all major banks.",                category: "finance"     },
+  { emoji: "📍",     title: "Besa / Beltarodi",     description: "Near Zudio, Croma — prime Besa connectivity.",            category: "locations"   },
+  { emoji: "✈️",     title: "Wardha Road / MIHAN",  description: "Near AIIMS, IIM & MIHAN — high appreciation zone.",        category: "locations"   },
+  { emoji: "🛣️",     title: "Samruddhi Circle",     description: "Plots from ₹22 Lakh on Samruddhi Mahamarg.",              category: "locations"   },
+  { emoji: "🏫",     title: "Manish Nagar",         description: "Residential plots and flats in Manish Nagar.",            category: "locations"   },
+  { emoji: "🌿",     title: "Katol Road",           description: "Outer Ring Road connectivity for easy access.",           category: "locations"   },
+  { emoji: "🏭",     title: "Koradi Road",          description: "New launches behind Haldiram — Koradi Road.",               category: "locations"   },
+  { emoji: "🏘️",     title: "Hudkeshwar",           description: "Affordable residential plots in Hudkeshwar.",               category: "locations"   },
+  { emoji: "🌄",     title: "Shankarpur",           description: "Behind Royal Gondwana School — Shankarpur.",                category: "locations"   },
+  { icon: Trees,     title: "Ready to Register",    description: "Fully developed plots with clear titles.",                category: "legal"       },
+  { icon: Users,     title: "Umred / Kamptee Road", description: "Affordable investment plots on growing corridors.",       category: "locations"   },
 ]
 
 // Doubled array created once at module level — not inside component
 const marqueeItems = [...amenities, ...amenities]
 
 const tabs = [
-  { key: "all",           label: "All"          },
-  { key: "wellness",      label: "Wellness"     },
-  { key: "entertainment", label: "Fun & Social" },
-  { key: "facilities",    label: "Facilities"   },
+  { key: "all",       label: "All Locations" },
+  { key: "locations", label: "Areas"         },
+  { key: "legal",     label: "Legal"         },
+  { key: "finance",   label: "Finance"       },
 ]
 
 // Memoized marquee — never re-renders
@@ -147,6 +147,7 @@ export function AmenitiesSection() {
   return (
     <section
       id="amenities"
+      aria-label="Mahalaxmi Infra locations across Nagpur"
       ref={sectionRef}
       className="amenities-section relative overflow-hidden"
     >
@@ -185,14 +186,14 @@ export function AmenitiesSection() {
           className="text-[10px] tracking-[0.35em] uppercase font-bold"
           style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}
         >
-          Life Inside
+          Mahalaxmi Infra Locations
         </span>
         <span className="flex-1 h-px" style={{ background: "rgba(48,83,74,0.1)" }} />
         <span
           className="text-[10px] tracking-[0.2em] uppercase font-medium"
           style={{ color: "rgba(48,83,74,0.35)", fontFamily: "'Inter', sans-serif" }}
         >
-          12 Amenities
+          9+ Prime Areas
         </span>
       </div>
 
@@ -207,16 +208,16 @@ export function AmenitiesSection() {
               className="font-bold leading-tight"
               style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(1.75rem, 4.5vw, 3.4rem)", color: "#0d0d0d" }}
             >
-              Everything
+              Plots Across
               <br className="hidden sm:block" />
-              {" "}<span style={{ color: "#C9862b" }}>You</span>{" "}
-              <span style={{ WebkitTextStroke: "1.5px #30534A", color: "transparent" }}>Need</span>
+              {" "}<span style={{ color: "#C9862b" }}>Prime</span>{" "}
+              <span style={{ WebkitTextStroke: "1.5px #30534A", color: "transparent" }}>Nagpur</span>
             </h2>
             <p
               className="mt-3 max-w-md leading-relaxed text-sm"
               style={{ color: "#777", fontFamily: "'Inter', sans-serif" }}
             >
-              Comprehensive features designed to exceed your expectations — built for the way you actually live.
+              Mahalaxmi Developer Nagpur operates across 9+ locations — strategically chosen for highest appreciation and connectivity.
             </p>
           </div>
 

@@ -5,15 +5,15 @@ import { ChevronDown, HelpCircle, MessageCircle } from "lucide-react"
 
 // Static data at module level
 const faqs = [
-  { id: 1, question: "What types of properties do you offer?",     answer: "We offer a wide range of residential and commercial plots in prime locations across Nagpur, including Besa, Beltarodi, Shankarpur, Wardha Road, and more. All properties are NMRDA sanctioned and RERA approved.", category: "Properties" },
-  { id: 2, question: "What is the price range for your plots?",    answer: "Our plots start from ₹22 Lakh onwards, depending on the location, size, and amenities. We offer flexible payment plans and financing options to suit various budgets.",                                          category: "Pricing"    },
-  { id: 3, question: "Are all your projects RERA approved?",       answer: "Yes, all our projects are 100% RERA approved and NMRDA sanctioned. We ensure complete legal compliance and transparency in all our dealings.",                                                                       category: "Legal"      },
-  { id: 4, question: "What financing options are available?",      answer: "We offer multiple financing options including bank loans, in-house payment plans, and EMI facilities. Our team will help you choose the best option based on your financial situation.",                              category: "Finance"    },
-  { id: 5, question: "How can I schedule a site visit?",           answer: "You can schedule a site visit by contacting us through our website, calling our helpline, or using the WhatsApp button. Our team will confirm your visit within 24 hours and provide all necessary details.",        category: "Visits"     },
-  { id: 6, question: "What amenities are included?",               answer: "Our properties come with world-class amenities including 24/7 security, power backup, green spaces, community halls, and more. Specific amenities vary by project location.",                                       category: "Amenities"  },
+  { id: 1, question: "What is Mahalaxmi Infra contact number?",           answer: "Mahalaxmi Infra contact number is +91 8999537942 (Anil Kakde). Available Mon–Sat, 9am–7pm. You can also WhatsApp or email at anil.kakde2016@gmail.com. Our office is at Flat 103-104, Laxmivihar Apartment, Wardha Road, Nagpur – 440025.", category: "Contact"    },
+  { id: 2, question: "What is the price of Mahalaxmi Infra plots?",       answer: "Mahalaxmi Infra price starts from ₹22 Lakh onwards on Samruddhi Circle. Prices vary by project, location, and plot size. All prices are transparent with no hidden charges. Contact us for the latest price list for any specific project.", category: "Pricing"    },
+  { id: 3, question: "Are Mahalaxmi Developer Nagpur plots RERA approved?", answer: "Yes. All Mahalaxmi Infra Nagpur projects are 100% RERA registered under MAHA RERA No. A50500044714 and NMRDA/NIT sanctioned. Every layout has clear title and is fully legal.", category: "Legal"      },
+  { id: 4, question: "How can I book a site visit to Mahalaxmi Infra?",  answer: "Site visit booking is free and easy — call +91 8999537942, fill the form on this page, or WhatsApp us. We confirm your visit within 24 hours and arrange pick-up if required.", category: "Visits"     },
+  { id: 5, question: "What bank finance is available on Mahalaxmi Infra plots?", answer: "Mahalaxmi Developers Nagpur plots are eligible for up to 90% bank loan from SBI, HDFC, Bank of Baroda, Axis, ICICI, and other major banks. Our team assists with the entire loan documentation process.", category: "Finance"    },
+  { id: 6, question: "Where are Mahalaxmi Infra projects located in Nagpur?", answer: "Mahalaxmi Infra operates at 9+ locations: Besa, Beltarodi, Wardha Road, MIHAN, Samruddhi Mahamarg, Katol Road, Koradi Road, Shankarpur, and Manish Nagar — all chosen for high future appreciation.", category: "Locations"  },
 ]
 
-const categories = ["all", "properties", "pricing", "legal", "finance"]
+const categories = ["all", "contact", "pricing", "legal", "finance", "visits", "locations"]
 
 const QUICK_STATS = [
   { stat: "13+",  label: "Years of Experience"    },
@@ -235,7 +235,7 @@ export function FAQSection() {
                 <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Questions</span>
               </h2>
               <p className="text-sm leading-relaxed max-w-md" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
-                Find answers to common questions about our properties, pricing, and services.
+                Common questions about Mahalaxmi Infra plots, pricing, RERA approval, site visits, and bank finance in Nagpur.
               </p>
             </div>
 

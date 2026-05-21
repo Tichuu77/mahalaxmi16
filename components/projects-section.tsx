@@ -357,13 +357,12 @@ export function ProjectsSection() {
               className="font-bold text-[#0d0d0d] leading-tight"
               style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(1.75rem, 5vw, 3.2rem)" }}
             >
-              Our{" "}
-              <span style={{ color: "#30534A" }}>Projects</span>{" "}
-              &amp;{" "}
-              <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Portfolio</span>
+              Current{" "}
+              <span style={{ color: "#30534A" }}>Mahalaxmi</span>{" "}
+              <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Projects</span>
             </h2>
             <p className="mt-2 max-w-md text-sm leading-relaxed" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
-              Explore our completed, ongoing, and upcoming developments across Nagpur.
+              Ongoing and upcoming residential plot developments by Mahalaxmi Developers across prime Nagpur locations.
             </p>
           </div>
 

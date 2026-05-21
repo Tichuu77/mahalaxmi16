@@ -6,7 +6,7 @@ import { memo } from "react"
 // Static data at module level
 const navLinks = [
   { href: "#about",     label: "About"     },
-  { href: "#amenities", label: "Amenities" },
+  { href: "#amenities", label: "Locations" },
   { href: "#projects",  label: "Projects"  },
   { href: "#gallery",   label: "Gallery"   },
 ]
@@ -91,12 +91,12 @@ export const Footer = memo(function Footer() {
               />
               <div>
                 <span className="footer-logo-text">Mahalaxmi Infra</span>
-                <span className="footer-subtitle">Premium Real Estate</span>
+                <span className="footer-subtitle">NMRDA Approved Plots · Est. 2011</span>
               </div>
             </div>
 
             <p className="footer-description">
-              Delivering premium residential &amp; commercial plots with excellence, transparency, and innovation across Nagpur.
+              Mahalaxmi Developer Pvt Ltd — 70+ NMRDA approved residential plot projects, 17,000+ happy families, and 13+ years of transparent real estate excellence in Nagpur.
             </p>
 
             <div className="footer-badge inline-flex items-center gap-2 rounded-full px-4 py-1.5">
@@ -164,7 +164,7 @@ export const Footer = memo(function Footer() {
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#C9862b" }} />
-            <p className="footer-badge-info">NMRDA Sanctioned · RERA Approved · ISO Certified</p>
+            <p className="footer-badge-info">NMRDA Sanctioned · RERA Approved · Up to 90% Bank Finance</p>
           </div>
           <div className="flex items-center gap-4">
             <a

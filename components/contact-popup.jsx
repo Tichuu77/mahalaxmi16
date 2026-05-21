@@ -3,18 +3,13 @@
 import { useState, useCallback, memo, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Send, X } from "lucide-react"
-import {
-    normalizePhone10,
-    isBlockedOrFakePhone10,
-    hasSubmittedThisPhone,
-    recordSubmittedPhone,
-    validateFillDuration,
-} from "@/lib/form-protection"
+import {normalizePhone10, isBlockedOrFakePhone10, hasSubmittedThisPhone, recordSubmittedPhone, validateFillDuration,} from "@/lib/form-protection"
+import { submitEnquiry } from "@/lib/submit-enquiry"
 import { ContactTurnstile, turnstileSiteKeyConfigured } from "@/components/contact-turnstile"
 
 const inputStyle = {
     width: "100%",
-    padding: "0.8rem 1rem",
+    padding: "0.7rem 1rem",
     background: "rgba(48,83,74,0.04)",
     border: "1px solid rgba(48,83,74,0.18)",
     borderRadius: "0.875rem",
@@ -30,7 +25,7 @@ const inputBlur = (e) => { e.currentTarget.style.borderColor = "rgba(48,83,74,0.
 const COOLDOWN_MS = 12 * 60 * 60 * 1000
 
 const Label = memo(({ htmlFor, children }) => (
-    <label htmlFor={htmlFor} className="block text-[11px] sm:text-xs font-bold uppercase mb-1.5 leading-snug break-words"
+    <label htmlFor={htmlFor} className="block text-[11px] sm:text-xs font-bold uppercase mb-1 leading-snug break-words"
         style={{ color: "#30534A", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.1em" }}>
         {children}
     </label>
@@ -44,6 +39,7 @@ export default function ContactPopup() {
     const [formState, setFormState] = useState(EMPTY_FORM)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState("idle")
+    const [apiErrorMessage, setApiErrorMessage] = useState("")
     const [honeypot, setHoneypot] = useState("")
     const [turnstileToken, setTurnstileToken] = useState("")
     const formStartedAtRef = useRef(null)
@@ -127,12 +123,17 @@ export default function ContactPopup() {
 
     const handleChange = useCallback((e) => {
         markFormStarted()
+        humanRef.current = true
         const { name, value } = e.target
         setFormState(prev => ({ ...prev, [name]: value }))
     }, [markFormStarted])
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault()
+        humanRef.current = true
+        if (formStartedAtRef.current === null) {
+            formStartedAtRef.current = Date.now()
+        }
 
         const alreadySubmitted = localStorage.getItem("formSubmitted") === "true"
         const submittedAt = parseInt(localStorage.getItem("formSubmittedAt") || "0")
@@ -143,12 +144,6 @@ export default function ContactPopup() {
 
         if (honeypot.trim() !== "") {
             setSubmitStatus("spam")
-            setTimeout(() => setSubmitStatus("idle"), 4000)
-            return
-        }
-
-        if (!humanRef.current) {
-            setSubmitStatus("interaction")
             setTimeout(() => setSubmitStatus("idle"), 4000)
             return
         }
@@ -184,49 +179,33 @@ export default function ContactPopup() {
             return
         }
 
-        localStorage.setItem("formSubmitted", "true")
-        localStorage.setItem("formSubmittedAt", String(Date.now()))
-
         setIsSubmitting(true)
         setSubmitStatus("idle")
 
-        const payload = {
-            access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
-            name: formState.name,
-            subject: `New Inquiry – ${formState.lookingFor}`,
-            message: `Name: ${formState.name}\nMobile: ${phone10}\nLooking For: ${formState.lookingFor}\nInterested In: ${formState.interestedIn}`.trim(),
-        }
-        if (turnstileToken) {
-            payload["cf-turnstile-response"] = turnstileToken
+        const result = await submitEnquiry({
+            name: formState.name.trim(),
+            phone: phone10,
+            lookingFor: formState.lookingFor,
+            interestedIn: formState.interestedIn,
+            honeypot,
+            turnstileToken,
+        })
+
+        if (result.ok) {
+            recordSubmittedPhone(phone10)
+            localStorage.setItem("formSubmitted", "true")
+            localStorage.setItem("formSubmittedAt", String(Date.now()))
+            setFormState(EMPTY_FORM)
+            setOpen(false)
+            sessionStorage.setItem("hideContactPopupOnce", "true")
+            router.push("/thank-you")
+        } else {
+            setApiErrorMessage(result.error)
+            setSubmitStatus(result.code === "validation" || result.code === "phone" ? "error" : "apiFailed")
+            setTimeout(() => setSubmitStatus("idle"), 6000)
         }
 
-        try {
-            const res = await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", Accept: "application/json" },
-                body: JSON.stringify(payload),
-            })
-            const data = await res.json()
-            if (data.success) {
-                recordSubmittedPhone(phone10)
-                setFormState(EMPTY_FORM)
-                setOpen(false)
-                sessionStorage.setItem("hideContactPopupOnce", "true")
-                router.push("/thank-you")
-            } else {
-                localStorage.removeItem("formSubmitted")
-                localStorage.removeItem("formSubmittedAt")
-                setSubmitStatus("error")
-                setTimeout(() => setSubmitStatus("idle"), 3000)
-            }
-        } catch (err) {
-            localStorage.removeItem("formSubmitted")
-            localStorage.removeItem("formSubmittedAt")
-            setSubmitStatus("error")
-            setTimeout(() => setSubmitStatus("idle"), 3000)
-        } finally {
-            setIsSubmitting(false)
-        }
+        setIsSubmitting(false)
     }, [formState, router, honeypot, turnstileToken])
 
     if (!open) return null
@@ -238,7 +217,7 @@ export default function ContactPopup() {
             onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
         >
             <div
-                className="relative w-full max-w-md rounded-2xl p-3 sm:p-8 max-h-[92vh] overflow-y-auto"
+                className="relative w-full max-w-md rounded-2xl p-4 sm:p-6 overflow-visible"
                 style={{
                     background: "#fff",
                     boxShadow: "0 24px 64px rgba(48,83,74,0.18)",
@@ -256,16 +235,16 @@ export default function ContactPopup() {
                     <X size={15} />
                 </button>
 
-                <div className="mb-6">
+                <div className="mb-4 pr-8">
                     <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>Free Consultation</p>
-                    <h2 className="font-bold text-2xl text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                    <h2 className="font-bold text-xl sm:text-2xl text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif" }}>
                         Get in <span style={{ color: "#30534A" }}>Touch</span>
                     </h2>
                 </div>
 
                 <form
                     onSubmit={handleSubmit}
-                    className="space-y-4 max-w-full overflow-x-hidden"
+                    className="space-y-3 max-w-full"
                     onPointerDownCapture={markHuman}
                     onKeyDownCapture={markHuman}
                     onFocusCapture={markHuman}
@@ -337,26 +316,33 @@ export default function ContactPopup() {
                             onBlur={inputBlur}
                         >
                             <option value="" disabled>Select property type</option>
-                            <option value="Residential Plots">Residential Plots</option>
-                            <option value="Commercial Plots">Commercial Plots</option>
-                            <option value="Residential & Commercial Plots">Residential &amp; Commercial Plots</option>
+                            <option value="Residential Plot">Residential Plot</option>
+                            <option value="Commercial Plot">Commercial Plot</option>
+                            <option value="Flat / Apartment">Flat / Apartment</option>
+                            <option value="Residential & Commercial">Residential &amp; Commercial</option>
                         </select>
                     </div>
 
                     <div>
-                        <Label htmlFor="popup-interestedIn">Interested In (Project + Area) <span style={{ color: "#e55" }}>*</span></Label>
-                        <input
-                            type="text"
+                        <Label htmlFor="popup-interestedIn">Preferred Location <span style={{ color: "#e55" }}>*</span></Label>
+                        <select
                             id="popup-interestedIn"
                             name="interestedIn"
                             value={formState.interestedIn}
                             onChange={handleChange}
                             onFocus={(e) => { markFormStarted(); inputFocus(e) }}
                             required
-                            placeholder="e.g. Green Valley – 1200 sq.ft"
-                            style={inputStyle}
+                            style={{ ...inputStyle, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 1rem center", paddingRight: "2.5rem", color: formState.interestedIn ? "#0d0d0d" : "#aaa", cursor: "pointer" }}
                             onBlur={inputBlur}
-                        />
+                        >
+                            <option value="" disabled>Choose area</option>
+                            <option value="Besa / Beltarodi">Besa / Beltarodi</option>
+                            <option value="Wardha Road / MIHAN">Wardha Road / MIHAN</option>
+                            <option value="Samruddhi Circle">Samruddhi Circle</option>
+                            <option value="Katol Road / Koradi">Katol Road / Koradi</option>
+                            <option value="Manish Nagar">Manish Nagar</option>
+                            <option value="Any Location">Any Location</option>
+                        </select>
                     </div>
 
                     <ContactTurnstile
@@ -420,12 +406,19 @@ export default function ContactPopup() {
                         </div>
                     )}
 
+                    {submitStatus === "apiFailed" && (
+                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
+                            style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
+                            {apiErrorMessage || "Could not send your enquiry. Please call +91 8999537942."}
+                        </div>
+                    )}
+
                     <button type="submit" disabled={isSubmitting || submitStatus === "rateLimit"}
-                        className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
                         style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif" }}>
                         {isSubmitting
                             ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Sending…</>
-                            : <>Send Message <Send size={14} /></>}
+                            : <>Send Enquiry <Send size={14} /></>}
                     </button>
                 </form>
             </div>

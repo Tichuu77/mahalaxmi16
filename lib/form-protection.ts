@@ -3,7 +3,7 @@
  * Not a substitute for server verification — raises the bar vs bare forms.
  */
 
-export const MIN_FORM_FILL_SECONDS = 3
+export const MIN_FORM_FILL_SECONDS = 1
 
 const LS_PHONES = "leadSubmittedPhones"
 
@@ -60,6 +60,6 @@ export function recordSubmittedPhone(phone10: string): void {
 }
 
 export function validateFillDuration(formStartedAt: number | null, minSeconds = MIN_FORM_FILL_SECONDS): boolean {
-  if (formStartedAt === null) return false
+  if (formStartedAt === null) return true
   return (Date.now() - formStartedAt) / 1000 >= minSeconds
 }
