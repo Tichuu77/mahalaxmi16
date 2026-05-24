@@ -183,7 +183,7 @@ export default function ContactPopup() {
             formData.append("subject", `New Inquiry – ${lookingFor}`)
             formData.append("message", `Name: ${name}\nMobile: ${phone10}\nLooking For: ${lookingFor}\nInterested In: ${interestedIn}`)
 
-            const res = await fetch("/api/submit", {
+            const res = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 body: formData,
             })
