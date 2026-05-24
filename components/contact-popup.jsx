@@ -10,7 +10,6 @@ import {
     recordSubmittedPhone,
     validateFillDuration,
 } from "@/lib/form-protection"
-import { ContactTurnstile, turnstileSiteKeyConfigured } from "@/components/contact-turnstile"
 
 const inputStyle = {
     width: "100%",
@@ -45,7 +44,6 @@ export default function ContactPopup() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState("idle")
     const [honeypot, setHoneypot] = useState("")
-    const [turnstileToken, setTurnstileToken] = useState("")
     const formStartedAtRef = useRef(null)
     const humanRef = useRef(false)
 
@@ -77,13 +75,11 @@ export default function ContactPopup() {
 
         const attachWhenReady = (attempt = 0) => {
             if (cancelled || attempt > 240) return
-
             const projectsSection = document.getElementById("projects")
             if (!projectsSection) {
                 rafId = requestAnimationFrame(() => attachWhenReady(attempt + 1))
                 return
             }
-
             let triggered = false
             observer = new IntersectionObserver(
                 (entries) => {
@@ -95,18 +91,12 @@ export default function ContactPopup() {
                         observer = null
                     }
                 },
-                {
-                    root: null,
-                    threshold: 0.12,
-                    rootMargin: "0px 0px -10% 0px",
-                }
+                { root: null, threshold: 0.12, rootMargin: "0px 0px -10% 0px" }
             )
             observer.observe(projectsSection)
         }
 
-        const timer = setTimeout(() => {
-            attachWhenReady()
-        }, 400)
+        const timer = setTimeout(() => { attachWhenReady() }, 400)
 
         return () => {
             cancelled = true
@@ -121,15 +111,15 @@ export default function ContactPopup() {
         formStartedAtRef.current = null
         humanRef.current = false
         setHoneypot("")
-        setTurnstileToken("")
         setSubmitStatus("idle")
     }, [open])
 
     const handleChange = useCallback((e) => {
         markFormStarted()
+        markHuman()
         const { name, value } = e.target
         setFormState(prev => ({ ...prev, [name]: value }))
-    }, [markFormStarted])
+    }, [markFormStarted, markHuman])
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault()
@@ -153,31 +143,28 @@ export default function ContactPopup() {
             return
         }
 
-        if (turnstileSiteKeyConfigured() && !turnstileToken) {
-            setSubmitStatus("captcha")
-            setTimeout(() => setSubmitStatus("idle"), 4000)
-            return
-        }
-
         if (!validateFillDuration(formStartedAtRef.current)) {
             setSubmitStatus("timing")
             setTimeout(() => setSubmitStatus("idle"), 4000)
             return
         }
 
-        if (!formState.name || !formState.mobile || !formState.lookingFor || !formState.interestedIn) {
+        const name = (formState.name || "").trim()
+        const mobileRaw = (formState.mobile || "").trim()
+        const lookingFor = (formState.lookingFor || "").trim()
+        const interestedIn = (formState.interestedIn || "").trim()
+        const phone10 = normalizePhone10(mobileRaw)
+
+        if (!name || !mobileRaw || !lookingFor || !interestedIn) {
             setSubmitStatus("error")
             setTimeout(() => setSubmitStatus("idle"), 3000)
             return
         }
-
-        const phone10 = normalizePhone10(formState.mobile)
         if (isBlockedOrFakePhone10(phone10)) {
             setSubmitStatus("phone")
             setTimeout(() => setSubmitStatus("idle"), 4000)
             return
         }
-
         if (hasSubmittedThisPhone(phone10)) {
             setSubmitStatus("duplicatePhone")
             setTimeout(() => setSubmitStatus("idle"), 4000)
@@ -186,40 +173,37 @@ export default function ContactPopup() {
 
         localStorage.setItem("formSubmitted", "true")
         localStorage.setItem("formSubmittedAt", String(Date.now()))
-
         setIsSubmitting(true)
         setSubmitStatus("idle")
 
-        const payload = {
-            access_key: "3ce8f80e-4346-40e1-9502-b1d434ec2be5",
-            name: formState.name,
-            subject: `New Inquiry – ${formState.lookingFor}`,
-            message: `Name: ${formState.name}\nMobile: ${phone10}\nLooking For: ${formState.lookingFor}\nInterested In: ${formState.interestedIn}`.trim(),
-        }
-        if (turnstileToken) {
-            payload["cf-turnstile-response"] = turnstileToken
-        }
-
         try {
-            const res = await fetch("https://api.web3forms.com/submit", {
+            const formData = new FormData()
+            formData.append("access_key", "3582cb02-f89e-44e7-9e8a-8e4cd2ac7619")
+            formData.append("name", name)
+            formData.append("subject", `New Inquiry – ${lookingFor}`)
+            formData.append("message", `Name: ${name}\nMobile: ${phone10}\nLooking For: ${lookingFor}\nInterested In: ${interestedIn}`)
+
+            const res = await fetch("/api/submit", {
                 method: "POST",
-                headers: { "Content-Type": "application/json", Accept: "application/json" },
-                body: JSON.stringify(payload),
+                body: formData,
             })
             const data = await res.json()
-            if (data.success) {
+
+            if (res.ok && data.success) {
                 recordSubmittedPhone(phone10)
                 setFormState(EMPTY_FORM)
                 setOpen(false)
                 sessionStorage.setItem("hideContactPopupOnce", "true")
                 router.push("/thank-you")
             } else {
+                console.error("form submit failed", data)
                 localStorage.removeItem("formSubmitted")
                 localStorage.removeItem("formSubmittedAt")
                 setSubmitStatus("error")
                 setTimeout(() => setSubmitStatus("idle"), 3000)
             }
         } catch (err) {
+            console.error("form submit error", err)
             localStorage.removeItem("formSubmitted")
             localStorage.removeItem("formSubmittedAt")
             setSubmitStatus("error")
@@ -227,7 +211,7 @@ export default function ContactPopup() {
         } finally {
             setIsSubmitting(false)
         }
-    }, [formState, router, honeypot, turnstileToken])
+    }, [formState, router, honeypot])
 
     if (!open) return null
 
@@ -270,72 +254,41 @@ export default function ContactPopup() {
                     onKeyDownCapture={markHuman}
                     onFocusCapture={markHuman}
                 >
-                    <input type="hidden" name="from_name" value="Contact Form Website" />
                     <input type="checkbox" name="botcheck" style={{ display: "none" }} tabIndex={-1} />
-
+                    {/* Honeypot — obscure name so autofill ignores it */}
                     <input
                         type="text"
-                        name="website"
+                        name="b_phone"
                         tabIndex={-1}
-                        autoComplete="off"
+                        autoComplete="new-password"
                         value={honeypot}
                         onChange={(e) => setHoneypot(e.target.value)}
-                        className="absolute opacity-0 w-px h-px overflow-hidden"
-                        style={{ left: "-9999px" }}
+                        style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden", opacity: 0 }}
                         aria-hidden="true"
                     />
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <Label htmlFor="popup-name">Name <span style={{ color: "#e55" }}>*</span></Label>
-                            <input
-                                type="text"
-                                id="popup-name"
-                                name="name"
-                                value={formState.name}
-                                onChange={handleChange}
-                                onFocus={(e) => { markFormStarted(); inputFocus(e) }}
-                                required
-                                placeholder="Your name"
-                                style={inputStyle}
-                                onBlur={inputBlur}
-                            />
+                            <input type="text" id="popup-name" name="name" value={formState.name}
+                                onChange={handleChange} onFocus={(e) => { markFormStarted(); markHuman(); inputFocus(e) }}
+                                required placeholder="Your name" style={inputStyle} onBlur={inputBlur} />
                         </div>
                         <div>
                             <Label htmlFor="popup-mobile">Mobile <span style={{ color: "#e55" }}>*</span></Label>
-                            <input
-                                type="tel"
-                                id="popup-mobile"
-                                name="mobile"
-                                value={formState.mobile}
-                                onChange={(e) => {
-                                    markFormStarted()
-                                    const v = e.target.value.replace(/\D/g, "").slice(0, 10)
-                                    setFormState(prev => ({ ...prev, mobile: v }))
-                                }}
-                                required
-                                placeholder="+91 XXXXX XXXXX"
-                                maxLength={10}
-                                pattern="\d{10}"
-                                style={inputStyle}
-                                onFocus={(e) => { markFormStarted(); inputFocus(e) }}
-                                onBlur={inputBlur}
-                            />
+                            <input type="tel" id="popup-mobile" name="mobile" value={formState.mobile}
+                                onChange={(e) => { markFormStarted(); markHuman(); const v = e.target.value.replace(/\D/g, "").slice(0, 10); setFormState(prev => ({ ...prev, mobile: v })) }}
+                                required placeholder="+91 XXXXX XXXXX" maxLength={10} pattern="\d{10}"
+                                style={inputStyle} onFocus={(e) => { markFormStarted(); markHuman(); inputFocus(e) }} onBlur={inputBlur} />
                         </div>
                     </div>
 
                     <div>
                         <Label htmlFor="popup-lookingFor">Looking For <span style={{ color: "#e55" }}>*</span></Label>
-                        <select
-                            id="popup-lookingFor"
-                            name="lookingFor"
-                            value={formState.lookingFor}
-                            onChange={handleChange}
-                            onFocus={(e) => { markFormStarted(); inputFocus(e) }}
-                            required
-                            style={{ ...inputStyle, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 1rem center", paddingRight: "2.5rem", color: formState.lookingFor ? "#0d0d0d" : "#aaa", cursor: "pointer" }}
-                            onBlur={inputBlur}
-                        >
+                        <select id="popup-lookingFor" name="lookingFor" value={formState.lookingFor}
+                            onChange={handleChange} onFocus={(e) => { markFormStarted(); markHuman(); inputFocus(e) }}
+                            required onBlur={inputBlur}
+                            style={{ ...inputStyle, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2330534A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 1rem center", paddingRight: "2.5rem", color: formState.lookingFor ? "#0d0d0d" : "#aaa", cursor: "pointer" }}>
                             <option value="" disabled>Select property type</option>
                             <option value="Residential Plots">Residential Plots</option>
                             <option value="Commercial Plots">Commercial Plots</option>
@@ -345,80 +298,18 @@ export default function ContactPopup() {
 
                     <div>
                         <Label htmlFor="popup-interestedIn">Interested In (Project + Area) <span style={{ color: "#e55" }}>*</span></Label>
-                        <input
-                            type="text"
-                            id="popup-interestedIn"
-                            name="interestedIn"
-                            value={formState.interestedIn}
-                            onChange={handleChange}
-                            onFocus={(e) => { markFormStarted(); inputFocus(e) }}
-                            required
-                            placeholder="e.g. Green Valley – 1200 sq.ft"
-                            style={inputStyle}
-                            onBlur={inputBlur}
-                        />
+                        <input type="text" id="popup-interestedIn" name="interestedIn" value={formState.interestedIn}
+                            onChange={handleChange} onFocus={(e) => { markFormStarted(); markHuman(); inputFocus(e) }}
+                            required placeholder="e.g. Green Valley – 1200 sq.ft" style={inputStyle} onBlur={inputBlur} />
                     </div>
 
-                    <ContactTurnstile
-                        onSuccess={setTurnstileToken}
-                        onExpire={() => setTurnstileToken("")}
-                    />
-
-                    {submitStatus === "error" && (
-                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                            style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
-                            Please fill in all required fields and try again.
-                        </div>
-                    )}
-
-                    {submitStatus === "rateLimit" && (
-                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
-                            You recently submitted an inquiry. Please try again after 12 hours.
-                        </div>
-                    )}
-
-                    {submitStatus === "spam" && (
-                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                            style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
-                            Submission could not be processed.
-                        </div>
-                    )}
-
-                    {submitStatus === "timing" && (
-                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
-                            Please take a few seconds to complete the form before sending.
-                        </div>
-                    )}
-
-                    {submitStatus === "interaction" && (
-                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
-                            Use the form fields or buttons to submit (keyboard and touch are supported).
-                        </div>
-                    )}
-
-                    {submitStatus === "captcha" && (
-                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
-                            Complete the verification above before sending.
-                        </div>
-                    )}
-
-                    {submitStatus === "phone" && (
-                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                            style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>
-                            Enter a valid 10-digit Indian mobile number.
-                        </div>
-                    )}
-
-                    {submitStatus === "duplicatePhone" && (
-                        <div className="flex items-start gap-2 rounded-xl p-3 text-sm"
-                            style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>
-                            This number already submitted from this device. Call us if you need help.
-                        </div>
-                    )}
+                    {submitStatus === "error" && <div className="rounded-xl p-3 text-sm" style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>Please fill in all required fields and try again.</div>}
+                    {submitStatus === "rateLimit" && <div className="rounded-xl p-3 text-sm" style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>You recently submitted an inquiry. Please try again after 12 hours.</div>}
+                    {submitStatus === "spam" && <div className="rounded-xl p-3 text-sm" style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>Submission could not be processed.</div>}
+                    {submitStatus === "timing" && <div className="rounded-xl p-3 text-sm" style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>Please take a few seconds to complete the form before sending.</div>}
+                    {submitStatus === "interaction" && <div className="rounded-xl p-3 text-sm" style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>Use the form fields or buttons to submit.</div>}
+                    {submitStatus === "phone" && <div className="rounded-xl p-3 text-sm" style={{ background: "rgba(229,85,85,0.07)", border: "1px solid rgba(229,85,85,0.25)", color: "#c44" }}>Enter a valid 10-digit Indian mobile number.</div>}
+                    {submitStatus === "duplicatePhone" && <div className="rounded-xl p-3 text-sm" style={{ background: "rgba(201,134,43,0.07)", border: "1px solid rgba(201,134,43,0.3)", color: "#a06820" }}>This number already submitted from this device. Call us if you need help.</div>}
 
                     <button type="submit" disabled={isSubmitting || submitStatus === "rateLimit"}
                         className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"

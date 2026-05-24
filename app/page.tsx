@@ -18,6 +18,7 @@ const Footer = dynamic(() => import("@/components/footer").then(m => ({ default:
 const CallButton = dynamic(() => import("@/components/call-button"))
 const WhatsappButton = dynamic(() => import("@/components/whatsapp-button"))
 const ContactPopup = dynamic(() => import("@/components/contact-popup"))
+const Locations = dynamic(() => import("@/components/locations").then(m => ({ default: m.LocationsSection })))
 export default function Home() {
   return (
     <main>
@@ -29,6 +30,7 @@ export default function Home() {
       <ProjectsSection />
       <GallerySection />
       <WhyChooseUsSection />
+      <Locations />
       <UserGuideSection />
       <TestimonialsSection />
       <NewsArticles />
