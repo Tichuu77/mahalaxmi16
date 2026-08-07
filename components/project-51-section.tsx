@@ -93,6 +93,7 @@ export function Project51Section() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const [activeAmenityCat, setActiveAmenityCat] = useState("all")
+  const [activeMobileTab, setActiveMobileTab] = useState("gallery")
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const handlePlayVideo = useCallback(() => {
@@ -298,8 +299,31 @@ export function Project51Section() {
           </div>
         </div>
 
+        {/* Mobile Tab Switcher */}
+        <div className="lg:hidden flex gap-2 border-b border-gray-200/60 overflow-x-auto pb-1 mb-8 scrollbar-none" style={{ scrollbarWidth: "none" }}>
+          {[
+            { id: "gallery", label: "Layout Gallery" },
+            { id: "amenities", label: "Amenities (35+)" },
+            { id: "landmarks", label: "Surrounding Area" }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveMobileTab(tab.id)}
+              className="shrink-0 px-4 py-2.5 font-bold text-xs transition-all border-b-2"
+              style={{
+                borderColor: activeMobileTab === tab.id ? "#30534A" : "transparent",
+                color: activeMobileTab === tab.id ? "#30534A" : "#888",
+                fontFamily: "'Poppins', sans-serif",
+                cursor: "pointer"
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         {/* Showcase Images Grid & Lightbox */}
-        <div className="mb-20">
+        <div className={`mb-20 ${activeMobileTab === "gallery" ? "block" : "hidden lg:block"}`}>
           <div className="flex justify-between items-end mb-6">
             <div>
               <h3 className="font-bold text-xl sm:text-2xl text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif" }}>
@@ -313,12 +337,14 @@ export function Project51Section() {
               <button
                 onClick={prevImage}
                 className="w-9 h-9 rounded-full flex items-center justify-center bg-white border border-gray-200 shadow-sm hover:scale-105 active:scale-95 transition-all"
+                style={{ color: "#30534A" }}
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={nextImage}
                 className="w-9 h-9 rounded-full flex items-center justify-center bg-white border border-gray-200 shadow-sm hover:scale-105 active:scale-95 transition-all"
+                style={{ color: "#30534A" }}
               >
                 <ChevronRight size={16} />
               </button>
@@ -372,7 +398,7 @@ export function Project51Section() {
         </div>
 
         {/* Surrounding Landmark Developments */}
-        <div className="mb-20">
+        <div className={`mb-20 ${activeMobileTab === "landmarks" ? "block" : "hidden lg:block"}`}>
           <div className="text-center mb-10">
             <h3 className="font-bold text-xl sm:text-2xl text-[#0d0d0d] mb-2" style={{ fontFamily: "'Poppins', sans-serif" }}>
               High-growth Surrounding Development
@@ -407,7 +433,7 @@ export function Project51Section() {
         </div>
 
         {/* Clubhouse & Lifestyle Amenities */}
-        <div className="p-8 sm:p-10 lg:p-12 rounded-3xl" style={{ background: "#ffffff", border: "1px solid rgba(48,83,74,0.1)", boxShadow: "0 10px 40px rgba(48,83,74,0.05)" }}>
+        <div className={`p-8 sm:p-10 lg:p-12 rounded-3xl ${activeMobileTab === "amenities" ? "block" : "hidden lg:block"}`} style={{ background: "#ffffff", border: "1px solid rgba(48,83,74,0.1)", boxShadow: "0 10px 40px rgba(48,83,74,0.05)" }}>
           
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
