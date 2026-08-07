@@ -73,9 +73,13 @@ const cardWAUrl = (title: string, location: string) =>
 const FeaturedCard = memo(({ project }: { project: Project }) => {
   const cfg = STATUS_CONFIG[project.status as keyof typeof STATUS_CONFIG]
 
-  const handleWhatsApp = useCallback(() => {
-    window.open(featuredWAUrl(project.title, project.location), "_blank")
-  }, [project.title, project.location])
+  const handleOpenPopup = useCallback((mode: "enquiry" | "brochure") => {
+    window.dispatchEvent(
+      new CustomEvent("open-contact-popup", {
+        detail: { project, mode },
+      })
+    )
+  }, [project])
 
   return (
     <div
@@ -154,15 +158,34 @@ const FeaturedCard = memo(({ project }: { project: Project }) => {
             </div>
           </div>
 
-          <button
-            onClick={handleWhatsApp}
-            className="group flex items-center justify-center gap-2 font-bold text-sm px-6 py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.01] active:scale-95 w-full"
-            style={{ background: "linear-gradient(135deg, #30534A, #3d6b60)", boxShadow: "0 6px 20px rgba(48,83,74,0.28)", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.03em" }}
-          >
-            <Phone size={15} />
-            Contact Us
-            <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full mt-auto">
+            <button
+              onClick={() => handleOpenPopup("enquiry")}
+              className="flex-1 flex items-center justify-center gap-2 font-bold text-sm px-6 py-3.5 rounded-xl text-white transition-all duration-300 hover:scale-[1.01] active:scale-95 cursor-pointer"
+              style={{
+                background: "linear-gradient(135deg, #30534A, #3d6b60)",
+                boxShadow: "0 6px 20px rgba(48,83,74,0.28)",
+                fontFamily: "'Poppins', sans-serif",
+                letterSpacing: "0.03em",
+                border: "none",
+              }}
+            >
+              Enquire Now
+            </button>
+            <button
+              onClick={() => handleOpenPopup("brochure")}
+              className="flex-1 flex items-center justify-center gap-2 font-bold text-sm px-6 py-3.5 rounded-xl transition-all duration-300 hover:scale-[1.01] active:scale-95 cursor-pointer"
+              style={{
+                background: "rgba(201,134,43,0.1)",
+                color: "#a86a1a",
+                border: "1px solid rgba(201,134,43,0.3)",
+                fontFamily: "'Poppins', sans-serif",
+                letterSpacing: "0.03em",
+              }}
+            >
+              Download Brochure
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -174,23 +197,13 @@ FeaturedCard.displayName = "FeaturedCard"
 const ProjectCard = memo(({ project }: { project: Project }) => {
   const cfg = STATUS_CONFIG[project.status as keyof typeof STATUS_CONFIG]
 
-  const handleWhatsApp = useCallback(() => {
-    window.open(cardWAUrl(project.title, project.location), "_blank")
-  }, [project.title, project.location])
-
-  const handleEnter = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.background = "#30534A"
-    e.currentTarget.style.color = "#fff"
-    e.currentTarget.style.borderColor = "transparent"
-    e.currentTarget.style.boxShadow = "0 6px 18px rgba(48,83,74,0.3)"
-  }, [])
-
-  const handleLeave = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.background = "rgba(48,83,74,0.07)"
-    e.currentTarget.style.color = "#30534A"
-    e.currentTarget.style.borderColor = "rgba(48,83,74,0.18)"
-    e.currentTarget.style.boxShadow = "none"
-  }, [])
+  const handleOpenPopup = useCallback((mode: "enquiry" | "brochure") => {
+    window.dispatchEvent(
+      new CustomEvent("open-contact-popup", {
+        detail: { project, mode },
+      })
+    )
+  }, [project])
 
   return (
     <div
@@ -260,17 +273,32 @@ const ProjectCard = memo(({ project }: { project: Project }) => {
           ))}
         </div>
 
-        <button
-          onClick={handleWhatsApp}
-          onMouseEnter={handleEnter}
-          onMouseLeave={handleLeave}
-          className="group/btn w-full flex items-center justify-center gap-2 font-semibold text-xs py-3 rounded-xl transition-all duration-250 active:scale-95"
-          style={{ background: "rgba(48,83,74,0.07)", color: "#30534A", border: "1px solid rgba(48,83,74,0.18)", fontFamily: "'Poppins', sans-serif", letterSpacing: "0.04em" }}
-        >
-          <Phone size={12} />
-          Contact Us
-          <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
-        </button>
+        <div className="grid grid-cols-2 gap-2 mt-auto w-full">
+          <button
+            onClick={() => handleOpenPopup("enquiry")}
+            className="flex items-center justify-center gap-1 font-bold text-[11px] py-3 rounded-xl text-white transition-all active:scale-95 text-center cursor-pointer"
+            style={{
+              background: "linear-gradient(135deg, #30534A, #3d6b60)",
+              boxShadow: "0 4px 12px rgba(48,83,74,0.18)",
+              fontFamily: "'Poppins', sans-serif",
+              border: "none",
+            }}
+          >
+            Enquire
+          </button>
+          <button
+            onClick={() => handleOpenPopup("brochure")}
+            className="flex items-center justify-center gap-1 font-bold text-[11px] py-3 rounded-xl transition-all active:scale-95 text-center cursor-pointer"
+            style={{
+              background: "rgba(201,134,43,0.08)",
+              color: "#a86a1a",
+              border: "1px solid rgba(201,134,43,0.25)",
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            Brochure
+          </button>
+        </div>
       </div>
 
       <div

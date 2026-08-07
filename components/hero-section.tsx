@@ -262,8 +262,10 @@ export function HeroSection() {
             }}
           >
             {/* Primary — orange */}
-            <button
-              onClick={scrollToContact}
+            <a
+              href="https://wa.me/+918999537942?text=Enquiry for more details"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -280,6 +282,7 @@ export function HeroSection() {
                 cursor: "pointer",
                 boxShadow: "0 4px 24px rgba(201,134,43,0.50)",
                 transition: "transform 0.2s, box-shadow 0.2s",
+                textDecoration: "none",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "scale(1.04)"
@@ -294,12 +297,19 @@ export function HeroSection() {
             >
               Contact Us Now
               <ArrowRight size={16} />
-            </button>
+            </a>
 
             {/* Secondary — green border, white text */}
-            <button
-              onClick={scrollToProjects}
+            <a
+              href="#projects"
+              onClick={(e) => {
+                e.preventDefault()
+                scrollToProjects()
+              }}
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
                 background: "transparent",
                 border: "1.5px solid #30534A",
                 color: "#ffffff",
@@ -310,6 +320,7 @@ export function HeroSection() {
                 borderRadius: "10px",
                 cursor: "pointer",
                 transition: "border-color 0.2s, color 0.2s, transform 0.2s",
+                textDecoration: "none",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "#C9862b"
@@ -325,7 +336,7 @@ export function HeroSection() {
               onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1.04)" }}
             >
               Explore Projects
-            </button>
+            </a>
           </div>
 
           {/* Investment highlight */}

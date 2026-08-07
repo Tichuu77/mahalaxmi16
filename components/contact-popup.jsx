@@ -10,6 +10,7 @@ import {
     recordSubmittedPhone,
     validateFillDuration,
 } from "@/lib/form-protection"
+import { downloadBrochurePDF } from "@/lib/pdf-generator"
 
 const inputStyle = {
     width: "100%",
@@ -44,6 +45,8 @@ export default function ContactPopup() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState("idle")
     const [honeypot, setHoneypot] = useState("")
+    const [formMode, setFormMode] = useState("enquiry") // "enquiry" or "brochure"
+    const [projectDetails, setProjectDetails] = useState(null)
     const formStartedAtRef = useRef(null)
     const humanRef = useRef(false)
 
@@ -53,6 +56,28 @@ export default function ContactPopup() {
 
     const markHuman = useCallback(() => {
         humanRef.current = true
+    }, [])
+
+    useEffect(() => {
+        if (typeof window === "undefined") return
+
+        const handleOpenPopup = (e) => {
+            const { project, mode } = e.detail || {}
+            setProjectDetails(project || null)
+            setFormMode(mode || "enquiry")
+            
+            if (project) {
+                setFormState(prev => ({
+                    ...prev,
+                    interestedIn: `${project.title} (${project.location || "Nagpur"})`,
+                    lookingFor: project.status === "commercial" ? "Commercial Plots" : "Residential Plots"
+                }))
+            }
+            setOpen(true)
+        }
+
+        window.addEventListener("open-contact-popup", handleOpenPopup)
+        return () => window.removeEventListener("open-contact-popup", handleOpenPopup)
     }, [])
 
     useEffect(() => {
@@ -194,6 +219,15 @@ export default function ContactPopup() {
                 setFormState(EMPTY_FORM)
                 setOpen(false)
                 sessionStorage.setItem("hideContactPopupOnce", "true")
+                
+                if (formMode === "brochure" && projectDetails) {
+                    try {
+                        await downloadBrochurePDF(projectDetails)
+                    } catch (pdfErr) {
+                        console.error("Brochure PDF generation failed:", pdfErr)
+                    }
+                }
+
                 router.push("/thank-you")
             } else {
                 console.error("form submit failed", data)
@@ -240,11 +274,26 @@ export default function ContactPopup() {
                     <X size={15} />
                 </button>
 
-                <div className="mb-6">
-                    <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>Free Consultation</p>
-                    <h2 className="font-bold text-2xl text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                        Get in <span style={{ color: "#30534A" }}>Touch</span>
+                 <div className="mb-6">
+                    <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#C9862b", fontFamily: "'Poppins', sans-serif" }}>
+                        {formMode === "brochure" ? "Brochure Download" : "Free Consultation"}
+                    </p>
+                    <h2 className="font-bold text-2xl text-[#0d0d0d] leading-tight" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                        {formMode === "brochure" ? (
+                            <>
+                                Download <span style={{ color: "#30534A" }}>Brochure</span>
+                            </>
+                        ) : (
+                            <>
+                                Project <span style={{ color: "#30534A" }}>Inquiry</span>
+                            </>
+                        )}
                     </h2>
+                    {projectDetails && (
+                        <p className="text-xs mt-1.5 font-medium" style={{ color: "#C9862b", fontFamily: "'Inter', sans-serif" }}>
+                            Project: {projectDetails.title}
+                        </p>
+                    )}
                 </div>
 
                 <form

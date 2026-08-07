@@ -240,18 +240,21 @@ const SidePanel = memo(() => (
       </p>
 
       <div className="space-y-2.5" style={{ position: "relative", zIndex: 1 }}>
-        <button
-          onClick={scrollToContact}
+        <a
+          href="https://wa.me/+918999537942?text=Enquiry for more details"
+          target="_blank"
+          rel="noopener noreferrer"
           className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3.5 rounded-xl text-white transition-all duration-250 hover:scale-[1.02] active:scale-95"
           style={{
             background: "linear-gradient(135deg, #C9862b 0%, #e09b3a 100%)",
             fontFamily: "'Poppins', sans-serif",
             letterSpacing: "0.04em",
             boxShadow: "0 4px 16px rgba(201,134,43,0.35)",
+            textDecoration: "none",
           }}
         >
           Contact Us
-        </button>
+        </a>
         <a
           href="tel:+918999537942"
           className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3.5 rounded-xl transition-all duration-250 hover:scale-[1.02] active:scale-95"
@@ -345,17 +348,20 @@ const MobileCTA = memo(() => (
         Our team is here to help you with personalised assistance.
       </p>
       <div className="flex gap-2" style={{ position: "relative", zIndex: 1 }}>
-        <button
-          onClick={scrollToContact}
-          className="flex-1 font-bold text-sm py-3 rounded-xl text-white transition-all active:scale-95"
+        <a
+          href="https://wa.me/+918999537942?text=Enquiry for more details"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 font-bold text-sm py-3 rounded-xl text-white transition-all active:scale-95 text-center"
           style={{
             background: "linear-gradient(135deg, #C9862b 0%, #e09b3a 100%)",
             fontFamily: "'Poppins', sans-serif",
             boxShadow: "0 4px 14px rgba(201,134,43,0.3)",
+            textDecoration: "none",
           }}
         >
           Contact Us
-        </button>
+        </a>
         <a
           href="tel:+918999537942"
           className="flex-1 font-bold text-sm py-3 rounded-xl text-center transition-all active:scale-95"
