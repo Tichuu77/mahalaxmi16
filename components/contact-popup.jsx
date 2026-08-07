@@ -47,6 +47,7 @@ export default function ContactPopup() {
     const [honeypot, setHoneypot] = useState("")
     const [formMode, setFormMode] = useState("enquiry") // "enquiry" or "brochure"
     const [projectDetails, setProjectDetails] = useState(null)
+    const [requestedDocumentUrl, setRequestedDocumentUrl] = useState(null)
     const formStartedAtRef = useRef(null)
     const humanRef = useRef(false)
 
@@ -62,9 +63,10 @@ export default function ContactPopup() {
         if (typeof window === "undefined") return
 
         const handleOpenPopup = (e) => {
-            const { project, mode } = e.detail || {}
+            const { project, mode, documentUrl } = e.detail || {}
             setProjectDetails(project || null)
             setFormMode(mode || "enquiry")
+            setRequestedDocumentUrl(documentUrl || null)
             
             if (project) {
                 setFormState(prev => ({
@@ -220,7 +222,13 @@ export default function ContactPopup() {
                 setOpen(false)
                 sessionStorage.setItem("hideContactPopupOnce", "true")
                 
-                if (formMode === "brochure" && projectDetails) {
+                if (requestedDocumentUrl) {
+                    try {
+                        window.open(requestedDocumentUrl, "_blank")
+                    } catch (openErr) {
+                        console.error("Failed to open document:", openErr)
+                    }
+                } else if (formMode === "brochure" && projectDetails) {
                     try {
                         await downloadBrochurePDF(projectDetails)
                     } catch (pdfErr) {

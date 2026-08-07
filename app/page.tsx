@@ -5,6 +5,7 @@ import { Navigation } from "@/components/navigation"
 // Above-the-fold: load eagerly
 // Everything below the fold: lazy-load with next/dynamic (code-split + deferred JS)
 const AboutSection = dynamic(() => import("@/components/about-section").then(m => ({ default: m.AboutSection })))
+const Project51Section = dynamic(() => import("@/components/project-51-section").then(m => ({ default: m.Project51Section })))
 const AmenitiesSection = dynamic(() => import("@/components/amenities-section").then(m => ({ default: m.AmenitiesSection })))
 const ProjectsSection = dynamic(() => import("@/components/projects-section").then(m => ({ default: m.ProjectsSection })))
 const GallerySection = dynamic(() => import("@/components/gallery-section").then(m => ({ default: m.GallerySection })))
@@ -24,6 +25,7 @@ export default function Home() {
     <main>
       <Navigation />
       <HeroSection />
+      <Project51Section />
       <ContactSection sectionId="contact-intro" />
       <AboutSection />
       <AmenitiesSection />
