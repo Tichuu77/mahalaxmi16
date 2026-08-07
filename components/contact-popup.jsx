@@ -96,41 +96,38 @@ export default function ContactPopup() {
             return
         }
 
-        let observer = null
-        let cancelled = false
-        let rafId = 0
+        let triggered = false
+        let timer = null
 
-        const attachWhenReady = (attempt = 0) => {
-            if (cancelled || attempt > 240) return
-            const projectsSection = document.getElementById("projects")
-            if (!projectsSection) {
-                rafId = requestAnimationFrame(() => attachWhenReady(attempt + 1))
-                return
+        const triggerPopup = () => {
+            if (triggered) return
+            triggered = true
+            setOpen(true)
+            cleanup()
+        }
+
+        const handleScroll = () => {
+            if (window.scrollY > 300) {
+                triggerPopup()
             }
-            let triggered = false
-            observer = new IntersectionObserver(
-                (entries) => {
-                    for (const entry of entries) {
-                        if (!entry.isIntersecting || triggered) continue
-                        triggered = true
-                        setOpen(true)
-                        observer?.disconnect()
-                        observer = null
-                    }
-                },
-                { root: null, threshold: 0.12, rootMargin: "0px 0px -10% 0px" }
-            )
-            observer.observe(projectsSection)
         }
 
-        const timer = setTimeout(() => { attachWhenReady() }, 400)
-
-        return () => {
-            cancelled = true
-            clearTimeout(timer)
-            cancelAnimationFrame(rafId)
-            observer?.disconnect()
+        const cleanup = () => {
+            window.removeEventListener("scroll", handleScroll)
+            if (timer) clearTimeout(timer)
         }
+
+        // Auto-trigger popup on reload/load after 4 seconds
+        timer = setTimeout(triggerPopup, 4000)
+
+        window.addEventListener("scroll", handleScroll, { passive: true })
+
+        // Check if page is already scrolled on load
+        if (window.scrollY > 300) {
+            triggerPopup()
+        }
+
+        return cleanup
     }, [])
 
     useEffect(() => {
