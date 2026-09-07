@@ -80,7 +80,7 @@ const RatingStrip = memo(({ starSize = 11, fontSize = "1.8rem" }: { starSize?: n
     </div>
     <div style={{ position: "relative", zIndex: 1 }}>
       <p className="font-bold text-sm" style={{ color: "#0d0d0d", fontFamily: "'Poppins', sans-serif" }}>Average Rating</p>
-      <p className="text-xs" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>From 17,000+ verified clients</p>
+      <p className="text-xs" style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}>From 17,000+ verified clients</p>
     </div>
   </div>
 ))
@@ -374,7 +374,7 @@ export function TestimonialsSection() {
               Clients
             </span>
           </h2>
-          <p className="text-sm leading-relaxed" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
+          <p className="text-sm leading-relaxed" style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}>
             Real stories from families who found their dream plots with Mahalaxmi Infra.
           </p>
         </div>

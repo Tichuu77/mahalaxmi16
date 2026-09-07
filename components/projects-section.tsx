@@ -17,7 +17,7 @@ const projects = {
   ongoing: [
     { id: 11, title: "Anaya Mahalaxmi Nagar - 51",  image: "/project_M-51.jpeg",           description: "Mahalaxmi Developers launched the project Anaya Mahalaxmi Nagar 51. The layout is NIT / NMRDA sanctioned with 90% bank finance.", location: "MOUZA - SUMTHANA MIHAN D-MART bACK SIDE NEAR OUTER RING ROAD SAMRUDDHI CIRCLE AIIMS NCI", status: "ongoing" },
     { id: 12, title: "Mahalaxmi Nagar - 52",  image: "/project_M-52.jpg",           description: "Mahalaxmi Developers launched the project Mahalaxmi Nagar 52. The layout is NIT / NMRDA sanctioned with 90% bank finance.", location: "MOUZA - DHAMNA HUDKESHAR ROAD NEAR OUTER RING ROAD", status: "ongoing" },
-    { id: 10, title: "Ayana Mahalaxmi Nagar - 49",  image: "/M-49-2.jpg.jpeg",           description: "", location: "Mouza SONDAPAR MIHAN NEAR AIIMS AND NCI OUTER RING ROAD TOUCH", status: "ongoing" },
+    { id: 10, title: "Ayana Mahalaxmi Nagar - 49",  image: "/M-49-2.jpg",           description: "", location: "Mouza SONDAPAR MIHAN NEAR AIIMS AND NCI OUTER RING ROAD TOUCH", status: "ongoing" },
     { id: 9,  title: "Mahalaxmi Nagar - 47",  image: "/project_M-47.jpg",       description: "New launch behind Haldiram & AM Cinema on Koradi Road. NMRDA & RL approved with 90% finance.",                                                                                            location: "KORADI ROAD (Behind Haldiram)",     status: "ongoing"   },
     { id: 7,  title: "Mahalaxmi Nagar - 46",  image: "/project_M-46.jpg",       description: "Premium plotted development near Samruddhi Mahamarg, close to AIIMS, IIM, MIHAN & D-Mart.",                                                                                               location: "MOUZA - BHANDARA JABALPUR OUTER RING ROAD TOUCH PROJECT",                  status: "ongoing"   },
     { id: 6,  title: "Mahalaxmi Nagar - 45",  image: "/project_M-45.jpg",       description: "Premium plotted development near Samruddhi Mahamarg, close to AIIMS, IIM, MIHAN & D-Mart.",                                                                                               location: "MOUZA - SUMTHANA",                  status: "ongoing"   },
@@ -131,7 +131,7 @@ const FeaturedCard = memo(({ project }: { project: Project }) => {
             {project.location && (
               <div className="flex items-center gap-2 mb-3">
                 <MapPin size={13} style={{ color: "#C9862b", flexShrink: 0 }} />
-                <span className="text-xs font-semibold tracking-wider uppercase" style={{ color: "#999", fontFamily: "'Inter', sans-serif" }}>
+                <span className="text-xs font-semibold tracking-wider uppercase" style={{ color: "#595959", fontFamily: "'Inter', sans-serif" }}>
                   {project.location}
                 </span>
               </div>
@@ -240,7 +240,7 @@ const ProjectCard = memo(({ project }: { project: Project }) => {
         {project.location && (
           <div className="flex items-center gap-1.5 mb-3">
             <MapPin size={12} style={{ color: "#C9862b", flexShrink: 0 }} />
-            <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#aaa", fontFamily: "'Inter', sans-serif" }}>
+            <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#595959", fontFamily: "'Inter', sans-serif" }}>
               {project.location}
             </span>
           </div>
@@ -392,7 +392,7 @@ export function ProjectsSection() {
               &amp;{" "}
               <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Portfolio</span>
             </h2>
-            <p className="mt-2 max-w-md text-sm leading-relaxed" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
+            <p className="mt-2 max-w-md text-sm leading-relaxed" style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}>
               Explore our ongoing and upcoming developments across Nagpur.
             </p>
           </div>

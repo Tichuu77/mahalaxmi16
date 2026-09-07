@@ -121,7 +121,7 @@ const FAQItem = memo(({ faq, isOpen, onToggle }: {
             className="inline-block mt-1.5 text-[10px] font-semibold rounded-full px-2.5 py-0.5"
             style={{
               background: isOpen ? "rgba(201,134,43,0.1)" : "rgba(48,83,74,0.07)",
-              color: isOpen ? "#a86a1a" : "#888",
+              color: isOpen ? "#a86a1a" : "#4a5a52",
               fontFamily: "'Inter', sans-serif",
               border: isOpen ? "1px solid rgba(201,134,43,0.25)" : "1px solid rgba(48,83,74,0.12)",
               boxShadow: isOpen ? "0 0 6px rgba(201,134,43,0.15)" : "none",
@@ -308,7 +308,7 @@ const SidePanel = memo(() => (
           >
             {s.stat}
           </span>
-          <span className="text-xs" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
+          <span className="text-xs" style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}>
             {s.label}
           </span>
         </div>
@@ -526,7 +526,7 @@ export function FAQSection() {
               </h2>
               <p
                 className="text-sm leading-relaxed max-w-md"
-                style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}
+                style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}
               >
                 Find answers to common questions about our properties, pricing, and services.
               </p>

@@ -65,7 +65,7 @@ const ContactCard = memo(({ contact, index }: { contact: typeof contacts[number]
           {contact.value}
         </p>
         {contact.sub && (
-          <p className="text-xs mt-1" style={{ color: index === 0 ? "rgba(255,255,255,0.4)" : "#bbb", fontFamily: "'Inter', sans-serif" }}>{contact.sub}</p>
+          <p className="text-xs mt-1" style={{ color: index === 0 ? "rgba(255,255,255,0.75)" : "#5a6a5e", fontFamily: "'Inter', sans-serif" }}>{contact.sub}</p>
         )}
       </div>
     </div>
@@ -215,7 +215,7 @@ export default function ContactSection({ sectionId = "contact" }: ContactSection
             Contact <span style={{ color: "#30534A" }}>Us</span>{" "}
             <span style={{ WebkitTextStroke: "1.5px #C9862b", color: "transparent" }}>Today</span>
           </h2>
-          <p className="text-sm leading-relaxed max-w-md" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>
+          <p className="text-sm leading-relaxed max-w-md" style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}>
             Have a question or ready to invest? We'd love to hear from you — reach out and we'll get back to you fast.
           </p>
         </div>

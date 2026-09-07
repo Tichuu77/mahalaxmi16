@@ -52,6 +52,15 @@ const IMAGES = [
   "https://res.cloudinary.com/dp53bwfcq/image/upload/v1786073124/WhatsApp_Image_2026-08-05_at_21.42.21_1_tdt3i6.jpg"
 ]
 
+const getCloudinaryThumb = (url: string) =>
+  url.replace("/upload/", "/upload/f_auto,q_auto,w_240,c_fill/")
+
+const getCloudinaryShowcase = (url: string) =>
+  url.replace("/upload/", "/upload/f_auto,q_auto,w_1080/")
+
+const getCloudinaryFullscreen = (url: string) =>
+  url.replace("/upload/", "/upload/f_auto,q_auto,w_1600/")
+
 const LANDMARKS = [
   { name: "Godrej Forest Estate", desc: "Premier forest township development directly adjacent" },
   { name: "D-Mart Samruddhi Circle", desc: "Convenient shopping complex just behind the township" },
@@ -272,7 +281,7 @@ export function Project51Section() {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif" }}>{doc.title}</div>
-                      <div className="text-[10px]" style={{ color: "#888", fontFamily: "'Inter', sans-serif" }}>{doc.desc}</div>
+                      <div className="text-[10px]" style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}>{doc.desc}</div>
                     </div>
                   </div>
                   <div className="p-1.5 rounded-full bg-white border border-gray-100 shadow-sm group-hover:scale-105 transition-transform">
@@ -312,7 +321,7 @@ export function Project51Section() {
               className="shrink-0 px-4 py-2.5 font-bold text-xs transition-all border-b-2"
               style={{
                 borderColor: activeMobileTab === tab.id ? "#30534A" : "transparent",
-                color: activeMobileTab === tab.id ? "#30534A" : "#888",
+                color: activeMobileTab === tab.id ? "#30534A" : "#555",
                 fontFamily: "'Poppins', sans-serif",
                 cursor: "pointer"
               }}
@@ -329,7 +338,7 @@ export function Project51Section() {
               <h3 className="font-bold text-xl sm:text-2xl text-[#0d0d0d]" style={{ fontFamily: "'Poppins', sans-serif" }}>
                 Site Layout Gallery
               </h3>
-              <p className="text-xs text-[#888]" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <p className="text-xs text-[#555]" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Interactive view of plans, clubhouse renders, and actual sites
               </p>
             </div>
@@ -356,10 +365,12 @@ export function Project51Section() {
           {/* Main Showcase Image Area */}
           <div className="relative rounded-3xl overflow-hidden shadow-xl bg-gray-100 group border border-gray-200/50" style={{ height: "clamp(240px, 45vw, 520px)" }}>
             <img
-              src={IMAGES[activeImgIndex]}
+              src={getCloudinaryShowcase(IMAGES[activeImgIndex])}
               alt={`Mahalaxmi Nagar 51 Slide ${activeImgIndex + 1}`}
               className="w-full h-full object-cover transition-transform duration-500 hover:scale-102"
               onClick={() => setLightboxOpen(true)}
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
             
@@ -394,7 +405,15 @@ export function Project51Section() {
                   opacity: idx === activeImgIndex ? 1 : 0.6,
                 }}
               >
-                <img src={img} alt={`thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                <img
+                  src={getCloudinaryThumb(img)}
+                  alt={`thumbnail ${idx + 1}`}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  width={80}
+                  height={56}
+                />
               </button>
             ))}
           </div>
@@ -406,7 +425,7 @@ export function Project51Section() {
             <h3 className="font-bold text-xl sm:text-2xl text-[#0d0d0d] mb-2" style={{ fontFamily: "'Poppins', sans-serif" }}>
               High-growth Surrounding Development
             </h3>
-            <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#888]" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#555]" style={{ fontFamily: "'Inter', sans-serif" }}>
               Located right in the center of Nagpur's futuristic commercial growth corridor with robust transport links
             </p>
           </div>
@@ -534,9 +553,10 @@ export function Project51Section() {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={IMAGES[activeImgIndex]}
+              src={getCloudinaryFullscreen(IMAGES[activeImgIndex])}
               alt={`Fullscreen ${activeImgIndex + 1}`}
               className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl border border-white/10"
+              decoding="async"
             />
             
             {/* Info panel in Lightbox */}
