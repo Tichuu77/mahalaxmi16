@@ -15,8 +15,8 @@ type Project = {
 // Static data at module level
 const projects = {
   ongoing: [
-    { id: 12, title: "Mahalaxmi Nagar - 52",  image: "/project_M-52.jpg",           description: "Mahalaxmi Developers launched the project Mahalaxmi Nagar 52. The layout is NIT / NMRDA sanctioned with 90% bank finance.", location: "MOUZA - DHAMNA HUDKESHAR ROAD NEAR OUTER RING ROAD", status: "ongoing" },
     { id: 11, title: "Anaya Mahalaxmi Nagar - 51",  image: "/project_M-51.jpeg",           description: "Mahalaxmi Developers launched the project Anaya Mahalaxmi Nagar 51. The layout is NIT / NMRDA sanctioned with 90% bank finance.", location: "MOUZA - SUMTHANA MIHAN D-MART bACK SIDE NEAR OUTER RING ROAD SAMRUDDHI CIRCLE AIIMS NCI", status: "ongoing" },
+    { id: 12, title: "Mahalaxmi Nagar - 52",  image: "/project_M-52.jpg",           description: "Mahalaxmi Developers launched the project Mahalaxmi Nagar 52. The layout is NIT / NMRDA sanctioned with 90% bank finance.", location: "MOUZA - DHAMNA HUDKESHAR ROAD NEAR OUTER RING ROAD", status: "ongoing" },
     { id: 10, title: "Ayana Mahalaxmi Nagar - 49",  image: "/M-49-2.jpg.jpeg",           description: "", location: "Mouza SONDAPAR MIHAN NEAR AIIMS AND NCI OUTER RING ROAD TOUCH", status: "ongoing" },
     { id: 9,  title: "Mahalaxmi Nagar - 47",  image: "/project_M-47.jpg",       description: "New launch behind Haldiram & AM Cinema on Koradi Road. NMRDA & RL approved with 90% finance.",                                                                                            location: "KORADI ROAD (Behind Haldiram)",     status: "ongoing"   },
     { id: 7,  title: "Mahalaxmi Nagar - 46",  image: "/project_M-46.jpg",       description: "Premium plotted development near Samruddhi Mahamarg, close to AIIMS, IIM, MIHAN & D-Mart.",                                                                                               location: "MOUZA - BHANDARA JABALPUR OUTER RING ROAD TOUCH PROJECT",                  status: "ongoing"   },
@@ -29,14 +29,15 @@ const projects = {
     { id: 8,  title: "Tattva Apas",           image: "/tatava apas.webp",       description: "Tattva Apas offers contemporary living with 100+ meticulously crafted apartments. Featuring landscaped gardens, play areas, and fitness centers, it fosters a vibrant social atmosphere.", location: "MOUZA - BELTARODI",                 status: "ongoing"   },
   ],
   upcoming: [
-    { id: 16, title: "Mahalaxmi Nagar - 50",  image: "/project_M-50.webp",           description: "", location: "", status: "upcoming" },
+    { id: 16, title: "Mahalaxmi Nagar - 50",  image: "/project_M-50.webp",           description: "Mahalaxmi Developers upcoming project Mahalaxmi Nagar 50. The layout is NIT / NMRDA sanctioned with 90% bank finance.", location: "NEAR SAMRUDDHI CIRCLE NAGPUR", status: "upcoming" },
     { id: 15, title: "Mahalaxmi Nagar - 48",  image: "/plotDef.avif",           description: "", location: "", status: "upcoming" },
   ],
 }
 
 const ALL_PROJECTS: Project[] = [
+  projects.upcoming[0],
   ...projects.ongoing,
-  ...projects.upcoming,
+  ...projects.upcoming.slice(1),
 ]
 
 const STATUS_CONFIG = {
@@ -127,16 +128,20 @@ const FeaturedCard = memo(({ project }: { project: Project }) => {
               </h3>
             </div>
 
-            <div className="flex items-center gap-2 mb-3">
-              <MapPin size={13} style={{ color: "#C9862b", flexShrink: 0 }} />
-              <span className="text-xs font-semibold tracking-wider uppercase" style={{ color: "#999", fontFamily: "'Inter', sans-serif" }}>
-                {project.location}
-              </span>
-            </div>
+            {project.location && (
+              <div className="flex items-center gap-2 mb-3">
+                <MapPin size={13} style={{ color: "#C9862b", flexShrink: 0 }} />
+                <span className="text-xs font-semibold tracking-wider uppercase" style={{ color: "#999", fontFamily: "'Inter', sans-serif" }}>
+                  {project.location}
+                </span>
+              </div>
+            )}
 
-            <p className="leading-relaxed mb-5 text-sm" style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}>
-              {project.description}
-            </p>
+            {project.description && (
+              <p className="leading-relaxed mb-5 text-sm" style={{ color: "#555", fontFamily: "'Inter', sans-serif" }}>
+                {project.description}
+              </p>
+            )}
 
             <div className="flex flex-wrap gap-2 mb-6">
               {FEATURED_TAGS.map((tag) => (
@@ -232,27 +237,31 @@ const ProjectCard = memo(({ project }: { project: Project }) => {
           {project.title}
         </h3>
 
-        <div className="flex items-center gap-1.5 mb-3">
-          <MapPin size={12} style={{ color: "#C9862b", flexShrink: 0 }} />
-          <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#aaa", fontFamily: "'Inter', sans-serif" }}>
-            {project.location}
-          </span>
-        </div>
+        {project.location && (
+          <div className="flex items-center gap-1.5 mb-3">
+            <MapPin size={12} style={{ color: "#C9862b", flexShrink: 0 }} />
+            <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#aaa", fontFamily: "'Inter', sans-serif" }}>
+              {project.location}
+            </span>
+          </div>
+        )}
 
-        <p
-          className="leading-relaxed mb-4 flex-1"
-          style={{
-            color: "#666",
-            fontFamily: "'Inter', sans-serif",
-            fontSize: "0.82rem",
-            display: "-webkit-box",
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-          }}
-        >
-          {project.description}
-        </p>
+        {project.description && (
+          <p
+            className="leading-relaxed mb-4 flex-1"
+            style={{
+              color: "#666",
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "0.82rem",
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {project.description}
+          </p>
+        )}
 
         <div className="flex flex-wrap gap-1.5 mb-4">
           {TAGS.map((tag) => (

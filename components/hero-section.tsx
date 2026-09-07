@@ -367,7 +367,7 @@ export function HeroSection() {
                   textShadow: "0 1px 8px rgba(0,0,0,0.9)",
                 }}
               >
-                Best Investment @ ₹22 Lakh on Samruddhi Circle
+                Best Investment @ ₹30 Lakh on Samruddhi Circle
               </span>
             </div>
           </div>
