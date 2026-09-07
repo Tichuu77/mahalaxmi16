@@ -117,8 +117,8 @@ export default function ContactPopup() {
             if (timer) clearTimeout(timer)
         }
 
-        // Auto-trigger popup on reload/load after 4 seconds
-        timer = setTimeout(triggerPopup, 4000)
+        // Auto-trigger popup on reload/load after 15 seconds
+        timer = setTimeout(triggerPopup, 15000)
 
         window.addEventListener("scroll", handleScroll, { passive: true })
 
@@ -273,6 +273,7 @@ export default function ContactPopup() {
 
                 <button
                     onClick={() => setOpen(false)}
+                    aria-label="Close dialog"
                     className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-colors"
                     style={{ background: "rgba(48,83,74,0.07)", color: "#30534A" }}
                 >

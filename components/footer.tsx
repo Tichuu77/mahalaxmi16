@@ -107,19 +107,19 @@ export const Footer = memo(function Footer() {
 
           {/* Navigation */}
           <div>
-            <h4 className="footer-section-title">Navigation</h4>
+            <h3 className="footer-section-title">Navigation</h3>
             <NavList links={navLinks} />
           </div>
 
           {/* Resources */}
           <div>
-            <h4 className="footer-section-title">Resources</h4>
+            <h3 className="footer-section-title">Resources</h3>
             <NavList links={resourceLinks} />
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="footer-section-title">Contact</h4>
+            <h3 className="footer-section-title">Contact</h3>
             <p className="footer-contact-name">Anil Kakde</p>
 
             <ul className="space-y-3">

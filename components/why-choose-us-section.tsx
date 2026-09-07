@@ -396,7 +396,7 @@ export function WhyChooseUsSection() {
           <div className="lg:pl-14 grid sm:grid-cols-2 gap-6">
             <div>
               {/* Section label */}
-              <h4
+              <h3
                 style={{
                   fontFamily: "'Poppins', sans-serif",
                   fontSize: "11px",
@@ -408,13 +408,13 @@ export function WhyChooseUsSection() {
                 }}
               >
                 Track Record
-              </h4>
+              </h3>
               <ul className="space-y-3">
                 {trackRecord.map(item => <CheckItem key={item} text={item} gold />)}
               </ul>
             </div>
             <div>
-              <h4
+              <h3
                 style={{
                   fontFamily: "'Poppins', sans-serif",
                   fontSize: "11px",
@@ -426,7 +426,7 @@ export function WhyChooseUsSection() {
                 }}
               >
                 Our Support
-              </h4>
+              </h3>
               <ul className="space-y-3">
                 {support.map(item => <CheckItem key={item} text={item} />)}
               </ul>

@@ -88,6 +88,7 @@ const FAQItem = memo(({ faq, isOpen, onToggle }: {
 
       <button
         onClick={handleClick}
+        aria-expanded={isOpen}
         className="w-full flex items-start gap-3 sm:gap-4 text-left transition-colors duration-200 active:scale-[0.99]"
         style={{ padding: "1rem 1.25rem", position: "relative", zIndex: 1 }}
       >

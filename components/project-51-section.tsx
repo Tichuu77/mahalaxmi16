@@ -336,6 +336,7 @@ export function Project51Section() {
             <div className="flex gap-2">
               <button
                 onClick={prevImage}
+                aria-label="Previous gallery image"
                 className="w-9 h-9 rounded-full flex items-center justify-center bg-white border border-gray-200 shadow-sm hover:scale-105 active:scale-95 transition-all"
                 style={{ color: "#30534A" }}
               >
@@ -343,6 +344,7 @@ export function Project51Section() {
               </button>
               <button
                 onClick={nextImage}
+                aria-label="Next gallery image"
                 className="w-9 h-9 rounded-full flex items-center justify-center bg-white border border-gray-200 shadow-sm hover:scale-105 active:scale-95 transition-all"
                 style={{ color: "#30534A" }}
               >
@@ -385,6 +387,7 @@ export function Project51Section() {
               <button
                 key={idx}
                 onClick={() => setActiveImgIndex(idx)}
+                aria-label={`View gallery image ${idx + 1}`}
                 className="shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all"
                 style={{
                   borderColor: idx === activeImgIndex ? "#C9862b" : "transparent",
@@ -502,6 +505,7 @@ export function Project51Section() {
           {/* Close Button */}
           <button
             onClick={() => setLightboxOpen(false)}
+            aria-label="Close fullscreen gallery"
             className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center text-white bg-white/10 hover:bg-white/20 transition-all border border-white/15"
           >
             <X size={20} />
@@ -510,6 +514,7 @@ export function Project51Section() {
           {/* Navigation Controls */}
           <button
             onClick={(e) => { e.stopPropagation(); prevImage() }}
+            aria-label="Previous fullscreen image"
             className="absolute left-4 sm:left-8 w-12 h-12 rounded-full flex items-center justify-center text-white bg-white/10 hover:bg-white/20 transition-all border border-white/15"
           >
             <ChevronLeft size={24} />
@@ -517,6 +522,7 @@ export function Project51Section() {
 
           <button
             onClick={(e) => { e.stopPropagation(); nextImage() }}
+            aria-label="Next fullscreen image"
             className="absolute right-4 sm:right-8 w-12 h-12 rounded-full flex items-center justify-center text-white bg-white/10 hover:bg-white/20 transition-all border border-white/15"
           >
             <ChevronRight size={24} />
