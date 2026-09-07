@@ -243,7 +243,7 @@ const MobileReasonCard = memo(({ reason, index }: { reason: typeof reasons[numbe
             fontFamily: "'Inter', sans-serif",
             fontSize: "11.5px",
             lineHeight: 1.65,
-            color: "#3d5a52",
+            color: "#283b35",
             margin: 0,
           }}
         >
@@ -377,7 +377,7 @@ export function WhyChooseUsSection() {
                 fontSize: "clamp(0.875rem, 1.05vw, 1rem)",
                 lineHeight: 1.8,
                 /* Boosted from muted grey class — clearly readable */
-                color: "#3d5a52",
+                color: "#283b35",
                 maxWidth: "400px",
                 margin: 0,
               }}

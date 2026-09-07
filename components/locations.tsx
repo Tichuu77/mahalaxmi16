@@ -106,7 +106,7 @@ const LocationCard = memo(({ loc, index, isVisible }: {
           className="locations-card-tag inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
           style={
             loc.tagGold
-              ? { background: "rgba(201,134,43,0.12)", color: "#C9862b", border: "1px solid rgba(201,134,43,0.3)" }
+              ? { background: "rgba(201,134,43,0.12)", color: "#a86a1a", border: "1px solid rgba(201,134,43,0.3)" }
               : { background: "rgba(48,83,74,0.08)", color: "#30534A", border: "1px solid rgba(48,83,74,0.2)" }
           }
         >
@@ -187,7 +187,7 @@ export function LocationsSection() {
         }
         .locations-description {
           font-size: 0.95rem;
-          color: #5a6a5e;
+          color: #44554b;
           line-height: 1.7;
           max-width: 480px;
         }
@@ -262,7 +262,7 @@ export function LocationsSection() {
         }
         .locations-card-detail {
           font-size: 0.78rem;
-          color: #6b7a6e;
+          color: #44554b;
           line-height: 1.5;
         }
         .locations-card-bar {
