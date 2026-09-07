@@ -438,7 +438,7 @@ export function HeroSection() {
                       fontSize: "2rem",
                       fontWeight: 800,
                       lineHeight: 1,
-                      color: "#C9862b",
+                      color: "#98590c",
                       minWidth: "96px",
                     }}
                   >
@@ -487,7 +487,7 @@ export function HeroSection() {
                   fontFamily: "'Poppins', sans-serif",
                   fontSize: "clamp(1.25rem, 4vw, 1.6rem)",
                   fontWeight: 800,
-                  color: "#C9862b",
+                  color: "#98590c",
                   marginBottom: "3px",
                 }}
               >

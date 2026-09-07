@@ -2,20 +2,21 @@ import type React from "react"
 import type { Metadata } from "next"
 import Script from "next/script"
 import { Poppins, Inter } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import "@/styles/components.css"
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700"],
   variable: "--font-heading",
+  display: "swap",
 })
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-sans",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -173,9 +174,29 @@ export default function RootLayout({
         {/* Google Tag Manager */}
         <Script
           id="gtm-script"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TCG77MQD');`,
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function initGTM() {
+                if (window.gtmDidInit) return;
+                window.gtmDidInit = true;
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TCG77MQD');
+              }
+              if (document.readyState === 'complete') {
+                ['scroll', 'mousemove', 'touchstart', 'click'].forEach(function(e) {
+                  window.addEventListener(e, initGTM, { once: true, passive: true });
+                });
+                setTimeout(initGTM, 4000);
+              } else {
+                window.addEventListener('load', function() {
+                  ['scroll', 'mousemove', 'touchstart', 'click'].forEach(function(e) {
+                    window.addEventListener(e, initGTM, { once: true, passive: true });
+                  });
+                  setTimeout(initGTM, 4000);
+                });
+              }
+            `,
           }}
         />
         
@@ -258,7 +279,6 @@ export default function RootLayout({
         </noscript>
  
         {children}
-        <Analytics />
       </body>
     </html>
   )

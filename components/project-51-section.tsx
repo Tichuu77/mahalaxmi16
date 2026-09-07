@@ -53,10 +53,10 @@ const IMAGES = [
 ]
 
 const getCloudinaryThumb = (url: string) =>
-  url.replace("/upload/", "/upload/f_auto,q_auto,w_240,c_fill/")
+  url.replace("/upload/", "/upload/f_auto,q_auto,w_160,c_fill/")
 
 const getCloudinaryShowcase = (url: string) =>
-  url.replace("/upload/", "/upload/f_auto,q_auto,w_1080/")
+  url.replace("/upload/", "/upload/f_auto,q_auto,w_800/")
 
 const getCloudinaryFullscreen = (url: string) =>
   url.replace("/upload/", "/upload/f_auto,q_auto,w_1600/")
